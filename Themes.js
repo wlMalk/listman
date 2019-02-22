@@ -28,12 +28,6 @@ class Theme {
     this.todaySecondary = new chroma.Color(this.todayColor).darken(1.5).saturate(.5).hex()
     this.tomorrowSecondary = new chroma.Color(this.tomorrowColor).brighten(1.5).saturate(.5).hex()
 
-    const paneBaseColorToday = new chroma.Color(this.todayColor).brighten(.5).saturate(.5)
-    const paneBaseColorTomorrow = new chroma.Color(this.tomorrowColor).brighten(.5).saturate(.5)
-    this.todayShades = [paneBaseColorToday.hex(),paneBaseColorToday.brighten(.3).hex(),paneBaseColorToday.brighten(.6).hex(),paneBaseColorToday.brighten(.9).hex(),paneBaseColorToday.brighten(1.2).hex(),paneBaseColorToday.brighten(1.5).hex()]
-    this.tomorrowShades = [paneBaseColorTomorrow.hex(),paneBaseColorTomorrow.brighten(.3).hex(),paneBaseColorTomorrow.brighten(.6).hex(),paneBaseColorTomorrow.brighten(.9).hex(),paneBaseColorTomorrow.brighten(1.2).hex(),paneBaseColorTomorrow.brighten(1.5).hex()]
-
-
     if(typeof todayAccent !== "undefined" && todayAccent != null){
       this.todayAccent = todayAccent
     }else{
@@ -68,6 +62,9 @@ class Theme {
     this.todayTasksText = this.todayTasks.map((n,i)=>new chroma.Color(n).darken(3-i*.2).hex())
     this.tomorrowTasksText = this.tomorrowTasks.map((n,i)=>new chroma.Color(n).darken(3-i*.2).hex())
 
+    this.taskTodayIndicator = new chroma.Color(this.todayColor).brighten(2).saturate(.5).hex()
+    this.taskTomorrowIndicator = new chroma.Color(this.tomorrowColor).brighten(2).saturate(.5).hex()
+
     this.mainTitles = new chroma.Color(this.mainColor).darken(2).desaturate(.2).hex()
 
     this.goalHighlight = new chroma.Color(this.mainColor).brighten(.5).hex()
@@ -81,6 +78,11 @@ class Theme {
     this.counterName = new chroma.Color(this.mainColor).darken(1.5).saturate(.3).hex()
     this.counterCount = new chroma.Color(this.mainColor).darken(2.5).desaturate(.3).hex()
     this.counterSeparator = new chroma.Color(this.mainColor).darken(.3).saturate(.2).hex()
+
+    this.mainTasksColor = new chroma.Color(this.mainColor).brighten(.1).hex()
+    this.mainTasksHighlightColor = new chroma.Color(this.mainColor).brighten(.5).hex()
+    this.mainTasksBorderColor = new chroma.Color(this.mainColor).darken(.2).saturate(.2).hex()
+    this.mainTasksTextColor = new chroma.Color(this.mainColor).darken(2.5).desaturate(.3).hex()
   }
 }
 
