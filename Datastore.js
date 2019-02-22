@@ -68,7 +68,32 @@ export class Datastore {
   constructor(setter){
     this.theme = 0
     this.setter = setter
-    this.tasks = []
+    this.tasks = [{
+      id: uuid(),
+      text:"jg",
+      scheduledForToday: true,
+      scheduledForTomorrow: true,
+      importance: null,
+      difficulty: null,
+      addedAt:new Date(),
+      recurring:false,
+      timeSpecified: false,
+      from:null,
+      to:null,
+      forTomorrow:false,
+      completed: false,
+      completedAt: null,
+      isNew: false,
+      scheduleHistory: [{
+        forTomorrow: false,
+        scheduledAt: new Date(),
+      }],
+      completionHistory: [],
+      goals: [{
+        id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
+        name: "acheive a big thing",
+      },]
+    }]
     this.goals = goals
     this.totals = {
       today: this.getTodayTasks().length,
@@ -141,8 +166,10 @@ export class Datastore {
       this.tasks.unshift({
         id: id,
         text:"",
-        importance:1,
-        difficulty:1,
+        importance:null,
+        difficulty:null,
+        scheduledForToday: true,
+        scheduledForTomorrow: true,
         addedAt:now,
         recurring:false,
         timeSpecified: false,
