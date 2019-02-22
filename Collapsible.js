@@ -12,6 +12,7 @@ export class Collapsible extends React.Component {
     }
     this.state = {
       c: new Animated.Value(stageValue),
+      o: new Animated.Value(stageValue),
       stage: stageValue,
     }
   }
@@ -23,6 +24,10 @@ export class Collapsible extends React.Component {
          // duration: 250,
       }).start(callback);
     }
+    Animated.timing(this.state.o, {
+      toValue: v,
+      duration: 150,
+    }).start()
     this.setState({stage:v})
   }
   default(callback){
@@ -39,9 +44,26 @@ export class Collapsible extends React.Component {
         inputRange: [-1,0,1],
         outputRange: [this.props.heights[0],this.props.heights[1],this.props.heights[2]]
     }):null;
+    var opacity = this.state.o.interpolate({
+        inputRange: [-1,0,1],
+        outputRange: [0,1,1]
+    })
+    var children = Array.from(this.props.children)
+    var alwaysOn = []
+    if(this.props.alwaysOnIndices){
+      for(var i = 0; i<this.props.alwaysOnIndices.length; i++){
+        alwaysOn.push(this.props.children[this.props.alwaysOnIndices[i]])
+      }
+      for(var i = 0; i<this.props.alwaysOnIndices.length; i++){
+        children.splice(this.props.alwaysOnIndices[i], 1)
+      }
+    }
     return (
       <Animated.View style={[this.props.style, this.props.flexible?{flex: 1}:{height: height}]}>
-      {this.props.children}
+        <Animated.View style={{flex:1, opacity: opacity}}>
+          {children}
+        </Animated.View>
+        {alwaysOn}
       </Animated.View>
     )
   }
