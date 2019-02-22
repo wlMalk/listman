@@ -5,36 +5,36 @@ import { themes } from './Themes'
 import { COUNTERS_HEIGHT } from './helpers'
 
 export class CountersList extends React.Component {
-
-  render(){
-
-    const list = [
+  constructor(props) {
+    super(props)
+    this.list = [
       {
         id: "ALL",
         name: "All tasks",
-        count: this.props.all,
-        onPress: this.props.onAllPress,
+        count: props.all,
+        onPress: props.onAllPress,
       },{
         id: "REMAINING",
         name: "Remaining",
-        count: this.props.remaining,
-        onPress: this.props.onRemainingPress,
+        count: props.remaining,
+        onPress: props.onRemainingPress,
       },{
         id: "COMPLETED",
         name: "Completed",
-        count: this.props.completed,
-        onPress: this.props.onCompletedPress,
+        count: props.completed,
+        onPress: props.onCompletedPress,
       },{
         id: "RECURRING",
         name: "Recurring",
-        count: this.props.recurring,
-        onPress: this.props.onRecurringPress,
+        count: props.recurring,
+        onPress: props.onRecurringPress,
       },
     ]
-
+  }
+  render(){
     return (
-      <View style={styles.countersList}>
-        {list.map((counter, i) => (<Counter key={i} selected={counter.id==this.props.selected} name={counter.name} count={counter.count} onPress={counter.onPress} last={i==list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />) )}
+      <View style={[styles.countersList, {backgroundColor: themes[this.props.theme].mainColor, borderBottomColor: themes[this.props.theme].mainAccent, borderBottomWidth: 5}]}>
+        {this.list.map((counter, i) => (<Counter key={i} selected={counter.id==this.props.selected} name={counter.name} count={counter.count} onPress={counter.onPress} last={i==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />) )}
       </View>
     )
   }
@@ -46,7 +46,7 @@ class Counter extends React.Component {
         <View style={{flex:1, height: COUNTERS_HEIGHT, flexDirection: "row"}}>
           {this.props.fontLoaded ? (
           <TouchableOpacity style={{flex: 1}} activeOpacity={.3} onPress={this.props.onPress}>
-            <View style={[styles.counter, this.props.selected?{backgroundColor: themes[this.props.theme].goalHighlight}:null]}>
+            <View style={[styles.counter, this.props.selected?{opacity: 1, backgroundColor: themes[this.props.theme].mainAccent}:null]}>
               <Text style={[styles.counterName, {color: themes[this.props.theme].counterName}]}>{this.props.name.toUpperCase()}</Text>
               <Text style={[styles.counterCount, {color: themes[this.props.theme].counterCount}]}>{this.props.count}</Text>
             </View>
@@ -68,12 +68,13 @@ const styles = StyleSheet.create({
   },
   counter: {
     flex: 1,
-    height: COUNTERS_HEIGHT,
+    height: COUNTERS_HEIGHT-5,
     paddingLeft: 8,
     paddingRight: 8,
     justifyContent: 'center',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
+    opacity: .8,
   },
   counterName: {
     fontFamily: 'pt-mono-bold',
@@ -87,10 +88,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   separator: {
-    height: COUNTERS_HEIGHT/2,
+    height: (COUNTERS_HEIGHT-5)/2,
     width: 2,
     marginRight: 3,
     marginLeft: 3,
-    marginTop: COUNTERS_HEIGHT/4,
+    marginTop: (COUNTERS_HEIGHT-5)/4,
   }
 });
