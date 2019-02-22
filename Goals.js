@@ -1,6 +1,9 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+import { List } from './List';
+import { ShadowOverlay } from './ShadowOverlay';
+
 import { animationConfig, pad, GOALS_HEIGHT } from './helpers'
 import { themes } from './Themes'
 
@@ -82,66 +85,31 @@ export class GoalsList extends React.Component {
   //     <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, lineHeight: 14}}>GOALS</Text>
   //   </View>
   // ) : null }
+  componentDidUpdate(prevProps) {
+    if(this.props.selected!=prevProps.selected&&this.props.selected!=null){
+      this.list.scrollToIndex(this.props.goals.findIndex((goal)=>goal.id===this.props.selected))
+    }
+  }
   render(){
     return (
-      <View style={styles.goalsList}>
-
-        <View>
-          <FlatList
-            style={{height: GOALS_HEIGHT}}
-            data={this.props.goals}
-            ref={(ref) => {this.flatListRef = ref}}
-            keyExtractor={goal => goal.id}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            initialNumToRender={10}
-            renderItem={({item, index}) => (
-              <Goal onPress={()=>{this.props.selectGoal(item.id)}} style={[index==0?{paddingLeft: 18}:null, index==this.props.goals.length-1?{paddingRight: 18}:null]} theme={this.props.theme} goal={item} selected={this.props.selected&&this.props.selected==item.id} fontLoaded={this.props.fontLoaded} />
-            )} />
-          <GoalsShade left={true} color={themes[this.props.theme].mainColor} />
-          <GoalsShade left={false} color={themes[this.props.theme].mainColor} />
-        </View>
-      </View>
-    )
-  }
-}
-
-class GoalsShade extends React.Component {
-  render() {
-    return (
-      <View style={[{position:'absolute',height:GOALS_HEIGHT,width:10,zIndex:999,overflow:'visible'},!this.props.left?{right:0}:{left:0}]}>
-        <View style={{
-          position:'absolute',
-          height:GOALS_HEIGHT,
-          width:10,
-          shadowColor: this.props.color,
-          shadowOffset: {height:0,width:this.props.left?10:-10},
-          shadowOpacity: 0.25,
-          shadowRadius: 10,
-          backgroundColor: this.props.color,
-        }}></View>
-        <View style={{
-          position:'absolute',
-          height:GOALS_HEIGHT,
-          width:10,
-          shadowColor: this.props.color,
-          shadowOffset: {height:0,width:this.props.left?6:-6},
-          shadowOpacity: 1,
-          shadowRadius: 2,
-          backgroundColor: this.props.color,
-        }}></View>
-        <View style={{
-          position:'absolute',
-          height:GOALS_HEIGHT,
-          width:10,
-          shadowColor: this.props.color,
-          shadowOffset: {height:0,width:this.props.left?10:-10},
-          shadowOpacity: 0.4,
-          shadowRadius: 6,
-          backgroundColor: this.props.color,
-        }}></View>
-      </View>
+      <List
+        ref={(ref)=>{this.list = ref}}
+        style={styles.goalsList}
+        data={this.props.goals}
+        keyExtractor={goal => goal.id}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={10}
+        renderItem={({item, index}) => (
+          <Goal onPress={()=>{this.props.selectGoal(item.id)}} style={[index==0?{paddingLeft: 18}:null, index==this.props.goals.length-1?{paddingRight: 18}:null]} theme={this.props.theme} goal={item} selected={this.props.selected&&this.props.selected==item.id} fontLoaded={this.props.fontLoaded} />
+        )}
+        overlayColor={themes[this.props.theme].mainColor}
+        overlaySize={35}
+        emptyState="no goals yet"
+        emptyStateSize={14}
+        emptyStateColor="#000"
+        fontLoaded={this.props.fontLoaded} />
     )
   }
 }
