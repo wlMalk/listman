@@ -1,11 +1,13 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { List } from './List';
 import { ShadowOverlay } from './ShadowOverlay';
 
 import { animationConfig, pad, GOALS_HEIGHT } from './helpers'
 import { themes } from './Themes'
+
+const screenWidth = Dimensions.get('window').width;
 
 export class Goal extends React.Component {
   static daysFromTo(from, to){
@@ -81,35 +83,123 @@ class GoalProgressBar extends React.Component {
 
 export class GoalsList extends React.Component {
   // {this.props.fontLoaded ? (
-  //   <View style={{paddingLeft: 18, paddingRight: 18, paddingTop: 5, paddingBottom: 0}}>
-  //     <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, lineHeight: 14}}>GOALS</Text>
-  //   </View>
+  //
   // ) : null }
+  constructor(props) {
+    super(props)
+    this.state = {
+      scroll: 0,
+      titleWidth: 0,
+      titleShown: true,
+      dragging: false,
+      momentum: false,
+    }
+
+    this.scrollToSelectedGoal = false
+
+    this.handleScroll = this.handleScroll.bind(this)
+    this.handleListScroll = this.handleListScroll.bind(this)
+    this.handleListMomentumScrollBegin = this.handleListMomentumScrollBegin.bind(this)
+    this.handleListMomentumScrollEnd = this.handleListMomentumScrollEnd.bind(this)
+    this.handleListDragBegin = this.handleListDragBegin.bind(this)
+    this.handleListDragEnd = this.handleListDragEnd.bind(this)
+    this.handleScrollEnd = this.handleScrollEnd.bind(this)
+  }
   componentDidUpdate(prevProps) {
     if(this.props.selected!=prevProps.selected&&this.props.selected!=null){
+      if(this.state.titleShown){
+        this.scrollView.scrollTo({x: this.state.titleWidth, animated: true})
+        this.scrollToSelectedGoal = true
+      }else{
+        this.list.scrollToIndex(this.props.goals.findIndex((goal)=>goal.id===this.props.selected))
+      }
+    }
+  }
+  handleScrollEnd(e) {
+    const contentOffset = e.nativeEvent.contentOffset.x
+    if(contentOffset==this.state.titleWidth&&this.state.titleShown&&this.scrollToSelectedGoal){
       this.list.scrollToIndex(this.props.goals.findIndex((goal)=>goal.id===this.props.selected))
+      this.setState({titleShown: false})
+      this.scrollToSelectedGoal = false
+    }
+  }
+  handleScroll(e) {
+    const contentOffset = e.nativeEvent.contentOffset.x
+    // if(contentOffset<=this.state.titleWidth&&contentOffset>=0&&contentOffset!=this.state.scroll){
+      this.setState({scroll: Math.max(Math.min(contentOffset,this.state.titleWidth),0)})
+
+    // }
+  }
+  handleListMomentumScrollBegin() {
+    this.setState({momentum: true})
+  }
+  handleListMomentumScrollEnd() {
+    this.setState({momentum: false})
+  }
+  handleListDragBegin() {
+    this.setState({dragging: true})
+  }
+  handleListDragEnd() {
+    this.setState({dragging: false})
+  }
+  handleListScroll(e) {
+    const contentOffset = e.nativeEvent.contentOffset.x
+    if(contentOffset>0&&this.state.titleShown&&(this.state.dragging||this.state.momentum)){
+      this.setState({titleShown: false})
+      this.scrollView.scrollTo({x: this.state.titleWidth, animated: true})
+      // this.list.scrollTo({x:0, animated: false})
+    }else if(contentOffset<=0&&!this.state.titleShown&&(this.state.dragging||this.state.momentum)){
+      this.setState({titleShown: true})
+      this.scrollView.scrollTo({x: 0, animated: true})
     }
   }
   render(){
     return (
-      <List
-        ref={(ref)=>{this.list = ref}}
-        style={styles.goalsList}
-        data={this.props.goals}
-        keyExtractor={goal => goal.id}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        initialNumToRender={10}
-        renderItem={({item, index}) => (
-          <Goal onPress={()=>{this.props.selectGoal(item.id)}} style={[index==0?{paddingLeft: 18}:null, index==this.props.goals.length-1?{paddingRight: 18}:null]} theme={this.props.theme} goal={item} selected={this.props.selected&&this.props.selected==item.id} fontLoaded={this.props.fontLoaded} />
-        )}
-        overlayColor={themes[this.props.theme].mainColor}
-        overlaySize={35}
-        emptyState="no goals yet"
-        emptyStateSize={14}
-        emptyStateColor="#000"
-        fontLoaded={this.props.fontLoaded} />
+      <View style={{height: GOALS_HEIGHT}}>
+        <ScrollView
+          ref={(ref)=>{this.scrollView = ref}}
+          scrollEnabled={false}
+          bounces={false}
+          horizontal={true}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          onScroll={this.handleScroll}
+          onMomentumScrollEnd={this.handleScrollEnd}
+          scrollEventThrottle={1}>
+          <View onLayout={(e)=>{this.setState({titleWidth: e.nativeEvent.layout.width})}} style={{justifyContent: 'center', alignItems: 'center', paddingLeft: 18*2, paddingRight: 18}}>
+            {this.props.fontLoaded ? (
+            <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>GOALS</Text>
+            ) : null}
+            {this.props.fontLoaded ? (
+            <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>10</Text>
+            ) : null}
+          </View>
+          <List
+            ref={(ref)=>{this.list = ref}}
+            onScroll={this.handleListScroll}
+            style={[styles.goalsList, {width: screenWidth-this.state.titleWidth+this.state.scroll}]}
+            data={this.props.goals}
+            keyExtractor={goal => goal.id}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={10}
+            onScrollBeginDrag={this.handleListDragBegin}
+            onScrollEndDrag={this.handleListDragEnd}
+            onMomentumScrollBegin={this.handleListMomentumScrollBegin}
+            onMomentumScrollEnd={this.handleListMomentumScrollEnd}
+            renderItem={({item, index}) => (
+              <Goal onPress={()=>{this.props.selectGoal(item.id)}} style={[index==0?{paddingLeft: 18}:null, index==this.props.goals.length-1?{paddingRight: 18}:null]} theme={this.props.theme} goal={item} selected={this.props.selected&&this.props.selected==item.id} fontLoaded={this.props.fontLoaded} />
+            )}
+            overlayColor={themes[this.props.theme].mainColor}
+            overlaySize={35}
+            emptyState="no goals yet"
+            emptyStateSize={14}
+            emptyStateColor="#000"
+            fontLoaded={this.props.fontLoaded} />
+            <View style={{width: this.state.titleWidth-this.state.scroll}}></View>
+        </ScrollView>
+      </View>
     )
   }
 }
