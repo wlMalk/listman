@@ -22,21 +22,35 @@ export class List extends React.Component {
     if(i==this.props.data.length-1){
       this.flatListRef.scrollToEnd({animated: true})
     }else{
-      this.flatListRef.scrollToIndex({index: i, viewPosition: 0.5, animated: true})
+      this.flatListRef.scrollToIndex({index: i, viewPosition: .5, animated: true})
     }
   }
+  scrollTo(v) {
+    this.flatListRef.scrollToOffset(v)
+  }
   handleScroll(e) {
+    const startOffset = 0
+    const endOffset = this.props.endOffset?this.contentSize-this.size+(this.props.startOffset?this.props.startOffset:0)+this.props.endOffset:this.contentSize-this.size
+
     const contentOffset = !this.props.horizontal?e.nativeEvent.contentOffset.y:e.nativeEvent.contentOffset.x
-    if(contentOffset<=0&&!this.state.reachedStart){
-      this.setState({reachedStart: true, reachedEnd: false})
+
+    if(contentOffset<=startOffset&&!this.state.reachedStart){
+      this.setState({reachedStart: true})
       this.startShadowOverlay.hide()
-    }else if(contentOffset>=this.contentSize-this.size&&!this.state.reachedEnd){
-      this.setState({reachedEnd: true, reachedStart: false})
+    }
+    if(contentOffset>=endOffset&&!this.state.reachedEnd){
+      this.setState({reachedEnd: true})
       this.endShadowOverlay.hide()
-    }else if(contentOffset>0&&contentOffset<this.contentSize-this.size&&(this.state.reachedStart||this.state.reachedEnd)){
-      this.setState({reachedStart: false, reachedEnd: false})
-      this.startShadowOverlay.show()
-      this.endShadowOverlay.show()
+    }
+    if(this.state.reachedStart||this.state.reachedEnd){
+      if(contentOffset>startOffset&&this.state.reachedStart){
+        this.setState({reachedStart: false})
+        this.startShadowOverlay.show()
+      }
+      if(contentOffset<endOffset&&this.state.reachedEnd){
+        this.setState({reachedEnd: false})
+        this.endShadowOverlay.show()
+      }
     }
     if(this.props.onScroll){
       this.props.onScroll(e)
@@ -47,18 +61,19 @@ export class List extends React.Component {
     return (
 
       <View
-        style={[style, {alignItems: 'center', justifyContent: 'center'}]}
+        style={style}
         onLayout={(e)=>{
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
         {this.props.data.length>0?(
         <FlatList
+          style={{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}}
+          nestedScrollEnabled={true}
           onContentSizeChange={(contentWidth, contentHeight)=>{
             this.contentSize = !this.props.horizontal?contentHeight:contentWidth
           }}
           onScroll={this.handleScroll}
           scrollEventThrottle={1}
-          style={{flexGrow: 0}}
           ref={(ref) => {this.flatListRef = ref}}
           {...props}/>
         ):(
