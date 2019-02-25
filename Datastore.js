@@ -93,6 +93,28 @@ export class Datastore {
         id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
         name: "acheive a big thing",
       },]
+    },{
+      id: uuid(),
+      text:"jg",
+      scheduledForToday: true,
+      scheduledForTomorrow: true,
+      importance: null,
+      difficulty: null,
+      addedAt:new Date(),
+      recurring:false,
+      timeSpecified: false,
+      from:null,
+      to:null,
+      forTomorrow:false,
+      completed: false,
+      completedAt: null,
+      isNew: false,
+      scheduleHistory: [{
+        forTomorrow: false,
+        scheduledAt: new Date(),
+      }],
+      completionHistory: [],
+      goals: []
     }]
     this.goals = goals
     this.totals = {
