@@ -1,6 +1,6 @@
 import React from 'react';
 import { Font } from 'expo';
-import { StyleSheet, Text, View } from 'react-native';
+import { UIManager, Platform, StyleSheet, Text, View } from 'react-native';
 
 import Home from './Home'
 import { Datastore } from './Datastore';
@@ -11,6 +11,9 @@ export default class App extends React.Component {
     this.state = {
       fontLoaded: false,
       datastore: new Datastore((datastore)=>{this.setState({datastore:datastore})}),
+    }
+    if (Platform.OS === 'android') {
+      UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
     }
   }
   async componentDidMount() {
