@@ -14,14 +14,14 @@ export class ShadowOverlay extends React.Component {
     this.setState({shown: true})
     Animated.timing(this.state.s, {
       toValue: 100,
-      duration: 250,
+      duration: 180,
     }).start()
   }
   hide() {
     this.setState({shown: false})
     Animated.timing(this.state.s, {
       toValue: 0,
-      duration: 250,
+      duration: 180,
     }).start()
   }
   render() {
