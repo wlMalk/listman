@@ -1,6 +1,8 @@
 import React from 'react';
 import { Platform, Animated, Dimensions, LayoutAnimation, ScrollView, FlatList, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
+import { List } from './List';
+
 import { themes } from './Themes'
 import { limits, animationConfig } from './helpers'
 
@@ -31,7 +33,16 @@ export class Task extends React.Component {
 
   }
   handleScroll(e) {
-    var action = e.nativeEvent.contentOffset.x==screenWidth?0:e.nativeEvent.contentOffset.x>screenWidth?1:-1;
+
+    var action = 0;
+    if(this.props.rightEnabled&&this.props.leftEnabled){
+      action = e.nativeEvent.contentOffset.x==screenWidth?0:(e.nativeEvent.contentOffset.x>screenWidth?1:-1);
+    }else if(this.props.rightEnabled){
+      action = e.nativeEvent.contentOffset.x==0?0:e.nativeEvent.contentOffset.x>0?1:-1;
+    }else if(this.props.leftEnabled){
+      action = e.nativeEvent.contentOffset.x==screenWidth?0:(e.nativeEvent.contentOffset.x>screenWidth?1:-1);
+    }
+
     if(this.state.dragAction!=action){
       this.setState({dragAction: action})
     }
@@ -78,32 +89,49 @@ export class Task extends React.Component {
       }
     }
   }
+  static formatDuration(d) {
+    var mins = d*15
+    var hrs = parseInt(mins/60)
+    mins = mins - hrs*60
+    var fmt = ""
+    if(hrs>0) {
+      fmt += hrs+"H"
+    }
+    if(mins>0) {
+      fmt += mins+"M"
+    }
+    return fmt==""?null:fmt
+  }
   render() {
-    const items = [this.state.editingImportance?this.state.importance:this.props.task.importance,"fd","fd"];
+    const items = [this.state.editingImportance?this.state.importance:this.props.task.importance,this.state.editingDifficulty?Task.formatDuration(this.state.difficulty):Task.formatDuration(this.props.task.difficulty)];
 
     var color = this.state.c.interpolate({
         inputRange: [0,100],
         outputRange: [this.props.color, this.props.highlightColor]
     });
 
+    var rightEnabled = this.props.rightEnabled
+    var leftEnabled = this.props.leftEnabled
+
     return (
-      <View style={!this.props.last?{marginBottom: 5}:null}>
+      <View style={[this.props.style, !this.props.last?{marginBottom: 5}:null]}>
         <ScrollView
         onContentSizeChange={()=>{if(Platform.OS==="android"){this.scrollView.scrollTo({x:screenWidth, animated: false})}}}
         style={{zIndex: 2}}
-        bounces={false}
         overScrollMode='never'
         scrollEnabled={!this.state.editingText&&this.state.scrollable}
         onMomentumScrollEnd={this.handleScrollEnd}
         pagingEnabled={true}
-        contentOffset={{x:screenWidth}}
+        contentOffset={{x:this.props.leftEnabled?screenWidth:0}}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={ 1 }
         onScroll={this.handleScroll}
         ref={(ref)=>{this.scrollView=ref}}>
+          {this.props.leftEnabled?(
           <View style={styles.taskPlaceholder}></View>
+          ):null}
           <TouchableWithoutFeedback onLongPress={this.handleLongPress} onPressOut={this.handlePressOut}>
             <View style={styles.taskContainer}>
               <Animated.View style={[this.props.style, styles.task, {backgroundColor: color}, this.props.borderColor?{borderColor: this.props.borderColor}:null]}>
@@ -112,7 +140,7 @@ export class Task extends React.Component {
                   {this.props.showDayIndicators&&this.props.task.scheduledForTomorrow?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTomorrowIndicator}]}></View>):null}
                 </View>
                 {this.props.fontLoaded ? (
-                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.verticalSpace}:null]}>{this.props.task.text.toUpperCase()}</Text>
+                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?this.props.verticalSpace+15:this.props.verticalSpace}:null]}>{this.props.task.text.toUpperCase()}</Text>
                 ) : null}
                 {this.props.task.goals.length>0 ? (
                 <TaskGoals color={this.props.goalColor} textColor={this.props.goalTextColor} goals={this.props.task.goals} selectGoal={this.props.selectGoal} fontLoaded={this.props.fontLoaded} />
@@ -121,12 +149,14 @@ export class Task extends React.Component {
               </Animated.View>
             </View>
           </TouchableWithoutFeedback>
+          {this.props.rightEnabled?(
           <View style={styles.taskPlaceholder}></View>
+          ) : null}
         </ScrollView>
-        <View style={[styles.taskUnderLayer, {backgroundColor: this.state.dragAction==1?this.props.rightColor:this.state.dragAction==-1?this.props.leftColor:"transparent"}]}>
+        <View style={[styles.taskUnderLayer, {backgroundColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftColor:"transparent"}, {borderColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightBorderColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftBorderColor:"transparent"}]}>
           {this.props.fontLoaded ? (
-          <Text style={[styles.actionText, {color: this.state.dragAction==1?this.props.rightTextColor:this.state.dragAction==-1?this.props.leftTextColor:"transparent"}, {textAlign: this.state.dragAction==1?"right":this.state.dragAction==-1?"left":"center"}]}>
-            {this.state.dragAction==1?this.props.rightText.toUpperCase():this.state.dragAction==-1?this.props.leftText.toUpperCase():""}
+          <Text style={[styles.actionText, {color: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightTextColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftTextColor:"transparent"}, {textAlign: this.state.dragAction==1&&this.props.rightEnabled?"right":this.state.dragAction==-1&&this.props.leftEnabled?"left":"center"}]}>
+            {this.state.dragAction==1&&this.props.rightEnabled?this.props.rightText.toUpperCase():this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftText.toUpperCase():""}
           </Text>
           ) : null}
         </View>
@@ -151,18 +181,16 @@ class TaskGoals extends React.Component {
 
 class TaskFooter extends React.Component {
   render() {
+    var nonNulls = this.props.items.filter((item)=>item!=null)
     var items = []
     if(this.props.fontLoaded){
-      for(var i=0; i<this.props.items.length; i++){
-        if(this.props.items[i]==null){
-          continue
-        }
+      for(var i=0; i<nonNulls.length; i++){
         items.push(
-          typeof this.props.items[i]=="string"||typeof this.props.items[i]=="number"?(
+          typeof nonNulls[i]=="string"||typeof nonNulls[i]=="number"?(
           <Text key={i} style={[styles.taskFooterText, {color: this.props.itemColor}, this.props.itemSize?{fontSize: this.props.itemSize}:null]}>
-            {typeof this.props.items[i]=="string"?this.props.items[i].toUpperCase():this.props.items[i]}
-          </Text>):this.props.items[i])
-        if(i<this.props.items.length-1){
+            {typeof nonNulls[i]=="string"?nonNulls[i].toUpperCase():nonNulls[i]}
+          </Text>):nonNulls[i])
+        if(i<nonNulls.length-1){
           items.push(<View key={"s"+i} style={[styles.taskFooterSeparator, {backgroundColor: this.props.separatorColor}]}></View>)
         }
       }
@@ -225,6 +253,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 18,
     paddingRight: 18,
+    borderWidth: 2,
   },
   taskPlaceholder: {
     width: screenWidth,
@@ -260,48 +289,178 @@ const styles = StyleSheet.create({
   },
 });
 
-export class TasksList extends React.Component {}
-export class TodayTask extends Task {}
-export class TomorrowTask extends Task {}
-export class GoalTask extends Task {}
-export class NowTask extends Task {}
-export class TodoTask extends Task {}
-
-class TasksShade extends React.Component {
+export class TasksList extends React.Component {
   render() {
     return (
-      <View style={[{position:'absolute',height:10,width:screenWidth,zIndex:999,overflow:'visible'},!this.props.bottom?{top:0}:{bottom:0}]}>
-        <View style={{
-          position:'absolute',
-          height:15,
-          width:screenWidth,
-          shadowColor: this.props.color,
-          shadowOffset: {width:0,height:!this.props.bottom?10:-10},
-          shadowOpacity: 0.25,
-          shadowRadius: 10,
-          backgroundColor: this.props.color,
-        }}></View>
-        <View style={{
-          position:'absolute',
-          height:15,
-          width:screenWidth,
-          shadowColor: this.props.color,
-          shadowOffset: {width:0,height:!this.props.bottom?6:-6},
-          shadowOpacity: 1,
-          shadowRadius: 2,
-          backgroundColor: this.props.color,
-        }}></View>
-        <View style={{
-          position:'absolute',
-          height:15,
-          width:screenWidth,
-          shadowColor: this.props.color,
-          shadowOffset: {width:0,height:!this.props.bottom?10:-10},
-          shadowOpacity: 0.4,
-          shadowRadius: 6,
-          backgroundColor: this.props.color,
-        }}></View>
+      <List
+        style={{flex: 1}}
+        scrollEnabled={this.props.scrollEnabled}
+        data={this.props.tasks}
+        keyExtractor={task => task.id}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={10}
+        startOffset={this.props.startOffset?this.props.startOffset:12}
+        endOffset={this.props.endOffset?this.props.endOffset:12}
+        renderItem={this.props.renderItem}
+        overlayColor={this.props.overlayColor}
+        overlaySize={this.props.overlaySize?this.props.overlaySize:12}
+        emptyState={this.props.emptyState}
+        emptyStateSize={14}
+        emptyStateColor={this.props.emptyStateColor}
+        fontLoaded={this.props.fontLoaded} />
+    )
+  }
+}
+
+export class TodayTask extends Task {
+  render() {
+    return (
+      <Task
+        task={this.props.task}
+        showDayIndicators={false}
+        verticalSpace={5}
+        color={themes[this.props.theme].todayTasks[this.props.index]}
+        borderColor={themes[this.props.theme].todayTasksHighlight[this.props.index]}
+        highlightColor={themes[this.props.theme].todayTasksHighlight[this.props.index]}
+        textColor={themes[this.props.theme].todayTasksText[this.props.index]}
+        textFontSize={30}
+        rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
+        leftText={this.props.leftText?this.props.leftText:"Completed"}
+        rightColor={themes[this.props.theme].tomorrowColor}
+        leftColor={themes[this.props.theme].todayColor}
+        rightBorderColor={themes[this.props.theme].tomorrowAccent}
+        leftBorderColor={themes[this.props.theme].todayColor}
+        rightTextColor={themes[this.props.theme].tomorrowAccent}
+        leftTextColor={themes[this.props.theme].todayAccent}
+        footerItemColor={themes[this.props.theme].todayTasksText[this.props.index]}
+        footerItemSize={10}
+        footerSeparatorColor={themes[this.props.theme].todayTasksHighlight[this.props.index]}
+        goalColor={themes[this.props.theme].todayTasksText[this.props.index]}
+        goalTextColor={"#fff"}
+        rightAction={this.props.rightAction}
+        leftAction={this.props.leftAction}
+        selectGoal={this.props.selectGoal}
+        theme={this.props.theme}
+        datastore={this.props.datastore}
+        fontLoaded={this.props.fontLoaded} />
+    )
+  }
+}
+
+export class TomorrowTask extends Task {
+  render() {
+    return (
+      <Task
+        task={this.props.task}
+        showDayIndicators={false}
+        verticalSpace={5}
+        color={themes[this.props.theme].tomorrowTasks[this.props.index]}
+        borderColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
+        highlightColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
+        textColor={themes[this.props.theme].tomorrowTasksText[this.props.index]}
+        textFontSize={30}
+        rightText={this.props.rightText?this.props.rightText:"Later"}
+        leftText={this.props.leftText?this.props.leftText:"Today"}
+        rightColor={themes[this.props.theme].mainColor}
+        leftColor={themes[this.props.theme].todayColor}
+        rightBorderColor={themes[this.props.theme].mainTitles}
+        leftBorderColor={themes[this.props.theme].todayAccent}
+        rightTextColor={themes[this.props.theme].mainTitles}
+        leftTextColor={themes[this.props.theme].todayAccent}
+        footerItemColor={themes[this.props.theme].tomorrowTasksText[this.props.index]}
+        footerItemSize={10}
+        footerSeparatorColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
+        goalColor={themes[this.props.theme].tomorrowTasksText[this.props.index]}
+        goalTextColor={"#fff"}
+        rightAction={this.props.rightAction}
+        leftAction={this.props.leftAction}
+        selectGoal={this.props.selectGoal}
+        theme={this.props.theme}
+        datastore={this.props.datastore}
+        fontLoaded={this.props.fontLoaded} />
+    )
+  }
+}
+
+export class GoalTask extends Task {}
+
+export class NowTask extends Task {
+  leftEnabled() {
+    return true
+  }
+  rightEnabled() {
+    return true
+  }
+  render() {
+    return (
+      <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
+        <Task
+          leftEnabled={this.leftEnabled()}
+          rightEnabled={this.rightEnabled()}
+          task={this.props.task}
+          showDayIndicators={false}
+          verticalSpace={5}
+          color={themes[this.props.theme].todayTasks[0]}
+          borderColor={themes[this.props.theme].todayTasksHighlight[0]}
+          highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
+          textColor={themes[this.props.theme].todayTasksText[0]}
+          textFontSize={30}
+          rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
+          leftText={this.props.leftText?this.props.leftText:"Completed"}
+          rightColor={themes[this.props.theme].tomorrowColor}
+          leftColor={themes[this.props.theme].todayColor}
+          rightBorderColor={themes[this.props.theme].tomorrowAccent}
+          leftBorderColor={themes[this.props.theme].todayColor}
+          rightTextColor={themes[this.props.theme].tomorrowAccent}
+          leftTextColor={themes[this.props.theme].todayAccent}
+          footerItemColor={themes[this.props.theme].todayTasksText[0]}
+          footerItemSize={10}
+          footerSeparatorColor={themes[this.props.theme].todayTasksHighlight[0]}
+          goalColor={themes[this.props.theme].todayTasksText[0]}
+          goalTextColor={"#fff"}
+          rightAction={this.props.rightAction}
+          leftAction={this.props.leftAction}
+          selectGoal={this.props.selectGoal}
+          theme={this.props.theme}
+          datastore={this.props.datastore}
+          fontLoaded={this.props.fontLoaded} />
       </View>
+    )
+  }
+}
+
+export class TodoTask extends Task {
+  render() {
+    return (
+      <Task
+        task={this.props.task}
+        showDayIndicators={true}
+        verticalSpace={5}
+        color={themes[this.props.theme].mainTasksColor}
+        highlightColor={themes[this.props.theme].mainTasksHighlightColor}
+        textColor={themes[this.props.theme].mainTasksTextColor}
+        borderColor={themes[this.props.theme].mainTasksBorderColor}
+        textFontSize={30}
+        rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
+        leftText={this.props.leftText?this.props.leftText:"Today"}
+        rightColor={themes[this.props.theme].tomorrowColor}
+        leftColor={themes[this.props.theme].todayColor}
+        rightBorderColor={themes[this.props.theme].tomorrowAccent}
+        leftBorderColor={themes[this.props.theme].todayAccent}
+        rightTextColor={themes[this.props.theme].tomorrowAccent}
+        leftTextColor={themes[this.props.theme].todayAccent}
+        footerItemColor="#000"
+        footerItemSize={10}
+        footerSeparatorColor="#aaa"
+        goalColor={themes[this.props.theme].mainTasksTextColor}
+        goalTextColor={"#fff"}
+        rightAction={this.props.rightAction}
+        leftAction={this.props.leftAction}
+        selectGoal={this.props.selectGoal}
+        theme={this.props.theme}
+        datastore={this.props.datastore}
+        fontLoaded={this.props.fontLoaded} />
     )
   }
 }
