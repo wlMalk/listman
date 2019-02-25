@@ -48,7 +48,7 @@ export class Collapsible extends React.Component {
         inputRange: [-1,0,1],
         outputRange: [0,1,1]
     })
-    var children = Array.from(this.props.children)
+    var children = Array.isArray(this.props.children)?Array.from(this.props.children):this.props.children
     var alwaysOn = []
     if(this.props.alwaysOnIndices){
       for(var i = 0; i<this.props.alwaysOnIndices.length; i++){
@@ -60,7 +60,7 @@ export class Collapsible extends React.Component {
     }
     return (
       <Animated.View style={[this.props.style, this.props.flexible?{flex: 1}:{height: height}]}>
-        <Animated.View style={{flex:1, opacity: opacity}}>
+        <Animated.View style={{flex:1, opacity: opacity, overflow: 'hidden'}}>
           {children}
         </Animated.View>
         {alwaysOn}
