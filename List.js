@@ -34,20 +34,20 @@ export class List extends React.Component {
 
     const contentOffset = !this.props.horizontal?e.nativeEvent.contentOffset.y:e.nativeEvent.contentOffset.x
 
-    if(contentOffset<=startOffset&&!this.state.reachedStart){
+    if(contentOffset<=startOffset&&!this.state.reachedStart&&!this.props.noStartOverlay){
       this.setState({reachedStart: true})
       this.startShadowOverlay.hide()
     }
-    if(contentOffset>=endOffset&&!this.state.reachedEnd){
+    if(contentOffset>=endOffset&&!this.state.reachedEnd&&!this.props.noEndOverlay){
       this.setState({reachedEnd: true})
       this.endShadowOverlay.hide()
     }
     if(this.state.reachedStart||this.state.reachedEnd){
-      if(contentOffset>startOffset&&this.state.reachedStart){
+      if(contentOffset>startOffset&&this.state.reachedStart&&!this.props.noStartOverlay){
         this.setState({reachedStart: false})
         this.startShadowOverlay.show()
       }
-      if(contentOffset<endOffset&&this.state.reachedEnd){
+      if(contentOffset<endOffset&&this.state.reachedEnd&&!this.props.noEndOverlay){
         this.setState({reachedEnd: false})
         this.endShadowOverlay.show()
       }
@@ -67,7 +67,7 @@ export class List extends React.Component {
         }}>
         {this.props.data.length>0?(
         <FlatList
-          style={{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}}
+          contentContainerStyle={!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}}
           nestedScrollEnabled={true}
           onContentSizeChange={(contentWidth, contentHeight)=>{
             this.contentSize = !this.props.horizontal?contentHeight:contentWidth
@@ -83,8 +83,12 @@ export class List extends React.Component {
             ):null
           ):(this.props.emptyState)
         )}
+        {!this.props.noStartOverlay?(
         <ShadowOverlay ref={(ref)=>{this.startShadowOverlay=ref}} initiallyShown={!this.state.reachedStart&&this.props.data.length>0} horizontal={this.props.horizontal} color={this.props.overlayColor} size={this.props.overlaySize} />
+        ):null}
+        {!this.props.noEndOverlay?(
         <ShadowOverlay ref={(ref)=>{this.endShadowOverlay=ref}} initiallyShown={!this.state.reachedEnd&&this.props.data.length>0} horizontal={this.props.horizontal} last={true} color={this.props.overlayColor} size={this.props.overlaySize} />
+        ):null}
       </View>
     )
   }
