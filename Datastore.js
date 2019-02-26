@@ -118,6 +118,56 @@ export class Datastore {
         id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
         name: "acheive a big thing",
       },]
+    },{
+      id: uuid(),
+      text:"jg",
+      scheduledForToday: true,
+      scheduledForTomorrow: true,
+      importance: null,
+      difficulty: null,
+      addedAt:new Date(),
+      recurring:false,
+      timeSpecified: false,
+      from:null,
+      to:null,
+      forTomorrow:false,
+      completed: false,
+      completedAt: null,
+      isNew: false,
+      scheduleHistory: [{
+        forTomorrow: false,
+        scheduledAt: new Date(),
+      }],
+      completionHistory: [],
+      goals: [{
+        id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
+        name: "acheive a big thing",
+      },]
+    },{
+      id: uuid(),
+      text:"jg",
+      scheduledForToday: true,
+      scheduledForTomorrow: true,
+      importance: null,
+      difficulty: null,
+      addedAt:new Date(),
+      recurring:false,
+      timeSpecified: false,
+      from:null,
+      to:null,
+      forTomorrow:false,
+      completed: false,
+      completedAt: null,
+      isNew: false,
+      scheduleHistory: [{
+        forTomorrow: false,
+        scheduledAt: new Date(),
+      }],
+      completionHistory: [],
+      goals: [{
+        id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
+        name: "acheive a big thing",
+      },]
     }]
     this.goals = goals
     this.totals = {
@@ -130,6 +180,9 @@ export class Datastore {
       tomorrow: this.getTomorrowTasks().length
     }
     this.sort()
+
+
+    this.completeTask = this.completeTask.bind(this)
   }
   sort(){
     var now = new Date()
@@ -246,8 +299,8 @@ export class Datastore {
       this.setter(this)
     }
   }
-  completeTask(id){
-    var i = this.tasks.findIndex(e => e.id === id)
+  completeTask(task){
+    var i = this.tasks.findIndex(e => e.id === task.id)
     if(i>=0){
       var t = this.tasks[i]
       var now = new Date()
@@ -258,7 +311,7 @@ export class Datastore {
         addedAt:now,
       })
       this.tasks.splice(i,1);
-      this.tasks.unshift(t)
+      // this.tasks.unshift(t)
       if(!t.forTomorrow){
         this.counts.today = this.counts.today - 1
       }else{
