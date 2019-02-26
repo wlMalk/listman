@@ -147,6 +147,7 @@ export default class Home extends React.Component {
                       tasks={this.props.datastore.tasks}
                       renderItem={({item, index}) => (
                         <TodoTask
+                          scrollable={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                           last={index==this.props.datastore.tasks.length-1}
                           key={item.id}
                           task={item}
@@ -201,8 +202,8 @@ export default class Home extends React.Component {
                           key={item.id}
                           task={item}
                           index={index}
-                          rightAction={(item)=>{}}
-                          leftAction={(item)=>{}}
+                          rightAction={this.props.datastore.scheduleTaskForTomorrow}
+                          leftAction={this.props.datastore.completeTask}
                           selectGoal={this.selectGoal}
                           theme={this.props.theme}
                           datastore={this.props.datastore}
@@ -210,13 +211,13 @@ export default class Home extends React.Component {
                       )}
                       noStartOverlay={true}
                       overlayColor={themes[this.props.theme].todayColor}
-                      emptyState={"No tasks"}
-                      emptyStateColor={themes[this.props.theme].mainTitles}
+                      emptyState={"No tasks for today"}
+                      emptyStateColor={themes[this.props.theme].todaySecondary}
                       fontLoaded={this.props.fontLoaded}
                     />
                     )}
                   </View>
-                  <Bar theme={this.props.theme} forTomorrow={false} date={new Date()} count={this.props.datastore.counts.today} total={this.props.datastore.totals.today} onPress={()=>{this.setScene(TODAY,null)}} creator={()=>{this.onCreatingTask(false)}} fontLoaded={this.props.fontLoaded} ref={ref => this.todayBar = ref} />
+                  <Bar theme={this.props.theme} closed={this.state.scene!=TODAY} forTomorrow={false} date={new Date()} count={this.props.datastore.counts.today} total={this.props.datastore.totals.today} onPress={()=>{this.setScene(TODAY,null)}} creator={()=>{this.onCreatingTask(false)}} fontLoaded={this.props.fontLoaded} ref={ref => this.todayBar = ref} />
                 </Collapsible>
                 <Collapsible alwaysOnIndices={[1]} ref={(ref)=>{this.tomorrowCollapsible = ref}} initialStage={"closed"} heights={[65,65,this.state.mainViewHeight-70-GOALS_HEIGHT-5-COUNTERS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].tomorrowColor, borderTopWidth: 5, borderTopColor:themes[this.props.theme].tomorrowAccent}}>
                   <View style={{flex:1}}>
@@ -238,12 +239,12 @@ export default class Home extends React.Component {
                       )}
                       noStartOverlay={true}
                       overlayColor={themes[this.props.theme].tomorrowColor}
-                      emptyState={"No tasks"}
-                      emptyStateColor={themes[this.props.theme].mainTitles}
+                      emptyState={"No tasks for tomorrow"}
+                      emptyStateColor={themes[this.props.theme].tomorrowSecondary}
                       fontLoaded={this.props.fontLoaded}
                     />
                   </View>
-                  <Bar theme={this.props.theme} forTomorrow={true} date={new Date(new Date().getTime() + 24 * 60 * 60 * 1000)} count={this.props.datastore.counts.tomorrow} total={this.props.datastore.totals.tomorrow} onPress={()=>{this.setScene(TOMORROW,null)}} creator={()=>{this.onCreatingTask(true)}} fontLoaded={this.props.fontLoaded} ref={ref => this.tomorrowBar = ref} />
+                  <Bar theme={this.props.theme} closed={this.state.scene!=TOMORROW} forTomorrow={true} date={new Date(new Date().getTime() + 24 * 60 * 60 * 1000)} count={this.props.datastore.counts.tomorrow} total={this.props.datastore.totals.tomorrow} onPress={()=>{this.setScene(TOMORROW,null)}} creator={()=>{this.onCreatingTask(true)}} fontLoaded={this.props.fontLoaded} ref={ref => this.tomorrowBar = ref} />
                 </Collapsible>
               </View>
             </SafeAreaView>
