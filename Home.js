@@ -141,10 +141,13 @@ export default class Home extends React.Component {
                 <Collapsible alwaysOnIndices={[2]} ref={(ref)=>{this.tasksCollapsible = ref}} heights={[COUNTERS_HEIGHT+5,this.state.mainViewHeight/2-GOALS_HEIGHT-HEADER_HEIGHT/2,this.state.mainViewHeight-65*2-5-GOALS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].mainColor}}>
                   <View style={{flex: 1}}>
                     <TasksList
+                      startOffset={12}
+                      endOffset={12}
                       scrollEnabled={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                       tasks={this.props.datastore.tasks}
-                      renderItem={({item}) => (
+                      renderItem={({item, index}) => (
                         <TodoTask
+                          last={index==this.props.datastore.tasks.length-1}
                           key={item.id}
                           task={item}
                           rightAction={(item)=>{}}
@@ -190,9 +193,11 @@ export default class Home extends React.Component {
                       fontLoaded={this.props.fontLoaded} />
                     ):(
                     <TasksList
+                      endOffset={12}
                       tasks={this.props.datastore.tasks}
                       renderItem={({item, index}) => (
                         <TodayTask
+                          last={index==this.props.datastore.tasks.length-1}
                           key={item.id}
                           task={item}
                           index={index}
@@ -203,6 +208,7 @@ export default class Home extends React.Component {
                           datastore={this.props.datastore}
                           fontLoaded={this.props.fontLoaded} />
                       )}
+                      noStartOverlay={true}
                       overlayColor={themes[this.props.theme].todayColor}
                       emptyState={"No tasks"}
                       emptyStateColor={themes[this.props.theme].mainTitles}
@@ -215,9 +221,11 @@ export default class Home extends React.Component {
                 <Collapsible alwaysOnIndices={[1]} ref={(ref)=>{this.tomorrowCollapsible = ref}} initialStage={"closed"} heights={[65,65,this.state.mainViewHeight-70-GOALS_HEIGHT-5-COUNTERS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].tomorrowColor, borderTopWidth: 5, borderTopColor:themes[this.props.theme].tomorrowAccent}}>
                   <View style={{flex:1}}>
                     <TasksList
+                      endOffset={12}
                       tasks={this.props.datastore.tasks}
                       renderItem={({item, index}) => (
                         <TomorrowTask
+                          last={index==this.props.datastore.tasks.length-1}
                           key={item.id}
                           task={item}
                           index={index}
@@ -228,6 +236,7 @@ export default class Home extends React.Component {
                           datastore={this.props.datastore}
                           fontLoaded={this.props.fontLoaded} />
                       )}
+                      noStartOverlay={true}
                       overlayColor={themes[this.props.theme].tomorrowColor}
                       emptyState={"No tasks"}
                       emptyStateColor={themes[this.props.theme].mainTitles}
