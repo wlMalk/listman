@@ -32,7 +32,18 @@ export class Task extends React.Component {
     this.handlePressOut = this.handlePressOut.bind(this)
   }
   handleScrollEnd() {
-    this.setState({scrolling: false})
+    if(this.state.dragAction==-1||this.state.dragAction==1){
+      this.setState({scrollable: false})
+      setTimeout(()=>{
+        this.setState({scrolling: false})
+        LayoutAnimation.configureNext(animationConfig);
+        if(this.state.dragAction==-1){
+          this.props.leftAction(this.props.task)
+        }else if(this.state.dragAction==1){
+          this.props.rightAction(this.props.task)
+        }
+      },30)
+    }
   }
   handleScrollBegin() {
     this.setState({scrolling: true})
@@ -129,7 +140,7 @@ export class Task extends React.Component {
         onContentSizeChange={()=>{if(Platform.OS==="android"){this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}}
         style={{zIndex: 2}}
         overScrollMode='never'
-        scrollEnabled={!this.state.editingText&&this.state.scrollable}
+        scrollEnabled={!this.state.editingText&&this.state.scrollable&&this.props.scrollable}
         onScrollBeginDrag={this.handleScrollBegin}
         onMomentumScrollEnd={this.handleScrollEnd}
         pagingEnabled={true}
@@ -366,6 +377,7 @@ export class TodayTask extends Task {
   render() {
     return (
       <Task
+        scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
         fullWidth={true}
@@ -412,6 +424,7 @@ export class TomorrowTask extends Task {
   render() {
     return (
       <Task
+        scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
         fullWidth={true}
@@ -461,6 +474,7 @@ export class NowTask extends Task {
     return (
       <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
         <Task
+          scrollable={this.props.scrollable}
           index={0}
           last={false}
           leftEnabled={this.leftEnabled()}
@@ -507,6 +521,7 @@ export class TodoTask extends Task {
   render() {
     return (
       <Task
+        scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
         task={this.props.task}
