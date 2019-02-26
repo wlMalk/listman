@@ -114,7 +114,10 @@ export class Datastore {
         scheduledAt: new Date(),
       }],
       completionHistory: [],
-      goals: []
+      goals: [{
+        id: "055e7529-da9b-458d-9591-c0a3aadac2cf7",
+        name: "acheive a big thing",
+      },]
     }]
     this.goals = goals
     this.totals = {
