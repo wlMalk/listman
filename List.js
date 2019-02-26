@@ -61,7 +61,7 @@ export class List extends React.Component {
     return (
 
       <View
-        style={style}
+        style={[style, {flex: 1, justifyContent: 'center'}]}
         onLayout={(e)=>{
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
