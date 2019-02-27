@@ -163,10 +163,14 @@ export class Store {
 
   }
   setTaskImportance(task, importance){
-
+    task.importance = importance
+    this.sort()
+    this.setter(this)
   }
   setTaskDuration(task, duration){
-
+    task.duration = duration
+    this.sort()
+    this.setter(this)
   }
   setTaskRecurring(task, recurring){
 
