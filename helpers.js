@@ -100,7 +100,7 @@ export const limits = {
   tomorrowTasks: 10,
   timeForChanges: 10,
   importance: 10,
-  difficulty: 10,
+  duration: 10,
   textLength: 100,
 }
 
