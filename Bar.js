@@ -49,6 +49,10 @@ export class Bar extends React.Component {
 
 const styles = StyleSheet.create({
   bar: {
+    zIndex: 10,
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
     height: 60,
     paddingLeft: 8,
     paddingRight: 18,
