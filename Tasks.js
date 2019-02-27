@@ -18,9 +18,9 @@ export class Task extends React.Component {
       editingText: props.task.isNew,
       c: new Animated.Value(0),
       editingImportance: false,
-      editingDifficulty: false,
+      editingDuration: false,
       importance: 0,
-      difficulty: 0,
+      duration: 0,
       dragAction: 0,
     }
     this._interval = null
@@ -76,29 +76,29 @@ export class Task extends React.Component {
       Animated.timing(this.state.x, {toValue:this.props.task.recurring?0:100,duration:80}).start()
       this.props.datastore.toggleTaskRecurring(this.props.task.id)
     }else{
-      this.setState({editingDifficulty: true, scrollable: false})
+      this.setState({editingDuration: true, scrollable: false})
       Animated.timing(this.state.c, {toValue:100,duration:100}).start()
-      this.setState({difficulty: Math.min(limits.difficulty, this.state.difficulty+1)})
+      this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
       this._interval = setInterval(()=>{
-        this.setState({difficulty: Math.min(limits.difficulty, this.state.difficulty+1)})
+        this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
       },200)
     }
   }
   handlePressOut(){
     if(this.state.editingImportance){
       this.props.datastore.setTaskImportance(this.props.task.id, this.state.importance)
-    }else if(this.state.editingDifficulty){
-      this.props.datastore.setTaskDifficulty(this.props.task.id, this.state.difficulty)
+    }else if(this.state.editingDuration){
+      this.props.datastore.setTaskDuration(this.props.task.id, this.state.duration)
     }
-    if(this.state.editingImportance||this.state.editingDifficulty){
+    if(this.state.editingImportance||this.state.editingDuration){
       LayoutAnimation.configureNext(animationConfig);
       if(this.state.editingImportance){
         this.props.datastore.setTaskImportance(this.props.task.id, this.state.importance)
       }else{
-        this.props.datastore.setTaskDifficulty(this.props.task.id, this.state.difficulty)
+        this.props.datastore.setTaskDuration(this.props.task.id, this.state.duration)
       }
       Animated.timing(this.state.c, {toValue:0,delay:350,duration:150}).start();
-      setTimeout(()=>{this.setState({scrollable: true, editingImportance: false, editingDifficulty:false, importance: 0, difficulty: 0})},500)
+      setTimeout(()=>{this.setState({scrollable: true, editingImportance: false, editingDuration:false, importance: 0, duration: 0})},500)
       if(this._interval!=null){
         clearInterval(this._interval)
       }
@@ -122,8 +122,8 @@ export class Task extends React.Component {
     if(this.state.editingImportance||this.props.task.importance!=null){
       footerItems.push(this.state.editingImportance?this.state.importance:this.props.task.importance)
     }
-    if(this.state.editingDifficulty||this.props.task.difficulty!=null){
-      footerItems.push(this.state.editingDifficulty?Task.formatDuration(this.state.difficulty):Task.formatDuration(this.props.task.difficulty))
+    if(this.state.editingDuration||this.props.task.duration!=null){
+      footerItems.push(this.state.editingDuration?Task.formatDuration(this.state.duration):Task.formatDuration(this.props.task.duration))
     }
 
     var color = this.state.c.interpolate({
@@ -187,7 +187,7 @@ export class Task extends React.Component {
           ) : null}
         </View>
         {this.props.fullWidth&&this.state.scrolling&&!this.props.last&&this.props.borderColor?(
-          <View style={{height:2, width: '100%', backgroundColor: this.props.borderColor}}></View>
+          <View style={{height:2, width: screenWidth, backgroundColor: this.props.borderColor}}></View>
         ):null}
       </View>
     )
@@ -393,11 +393,11 @@ export class TodayTask extends Task {
         textFontSize={18}
         rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
         leftText={this.props.leftText?this.props.leftText:"Completed"}
-        rightColor={themes[this.props.theme].tomorrowColor}
+        rightColor={themes[this.props.theme].todayColor}
         leftColor={themes[this.props.theme].todayColor}
-        rightBorderColor={themes[this.props.theme].tomorrowAccent}
+        rightBorderColor={themes[this.props.theme].todayColor}
         leftBorderColor={themes[this.props.theme].todayColor}
-        rightTextColor={themes[this.props.theme].tomorrowAccent}
+        rightTextColor={themes[this.props.theme].todaySecondary}
         leftTextColor={themes[this.props.theme].todayAccent}
         footerItemColor={themes[this.props.theme].todayTasksText[this.props.index]}
         footerItemSize={10}
@@ -440,12 +440,12 @@ export class TomorrowTask extends Task {
         textFontSize={18}
         rightText={this.props.rightText?this.props.rightText:"Later"}
         leftText={this.props.leftText?this.props.leftText:"Today"}
-        rightColor={themes[this.props.theme].mainColor}
-        leftColor={themes[this.props.theme].todayColor}
-        rightBorderColor={themes[this.props.theme].mainTitles}
-        leftBorderColor={themes[this.props.theme].todayAccent}
-        rightTextColor={themes[this.props.theme].mainTitles}
-        leftTextColor={themes[this.props.theme].todayAccent}
+        rightColor={themes[this.props.theme].tomorrowColor}
+        leftColor={themes[this.props.theme].tomorrowColor}
+        rightBorderColor={themes[this.props.theme].tomorrowColor}
+        leftBorderColor={themes[this.props.theme].tomorrowColor}
+        rightTextColor={themes[this.props.theme].tomorrowSecondary}
+        leftTextColor={themes[this.props.theme].tomorrowAccent}
         footerItemColor={themes[this.props.theme].tomorrowTasksText[this.props.index]}
         footerItemSize={10}
         footerSeparatorColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
@@ -490,9 +490,9 @@ export class NowTask extends Task {
           rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
           leftText={this.props.leftText?this.props.leftText:"Completed"}
           rightColor={themes[this.props.theme].tomorrowColor}
-          leftColor={themes[this.props.theme].todayColor}
+          leftColor={themes[this.props.theme].todaySecondary}
           rightBorderColor={themes[this.props.theme].tomorrowAccent}
-          leftBorderColor={themes[this.props.theme].todayColor}
+          leftBorderColor={themes[this.props.theme].todayAccent}
           rightTextColor={themes[this.props.theme].tomorrowAccent}
           leftTextColor={themes[this.props.theme].todayAccent}
           footerItemColor={themes[this.props.theme].todayTasksText[0]}
@@ -524,6 +524,8 @@ export class TodoTask extends Task {
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
+        leftEnabled={this.leftEnabled()}
+        rightEnabled={this.rightEnabled()}
         task={this.props.task}
         showDayIndicators={true}
         verticalSpace={5}
@@ -534,10 +536,10 @@ export class TodoTask extends Task {
         textFontSize={18}
         rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
         leftText={this.props.leftText?this.props.leftText:"Today"}
-        rightColor={themes[this.props.theme].tomorrowColor}
-        leftColor={themes[this.props.theme].todayColor}
-        rightBorderColor={themes[this.props.theme].tomorrowAccent}
-        leftBorderColor={themes[this.props.theme].todayAccent}
+        rightColor={themes[this.props.theme].mainColor}
+        leftColor={themes[this.props.theme].mainColor}
+        rightBorderColor={themes[this.props.theme].mainColor}
+        leftBorderColor={themes[this.props.theme].mainColor}
         rightTextColor={themes[this.props.theme].tomorrowAccent}
         leftTextColor={themes[this.props.theme].todayAccent}
         footerItemColor="#000"
