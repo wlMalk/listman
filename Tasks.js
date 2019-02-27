@@ -65,37 +65,31 @@ export class Task extends React.Component {
   handleLongPress(event){
     const width = screenWidth - 18*2;
     var x = event.nativeEvent.pageX - 18;
+    LayoutAnimation.configureNext(animationConfig);
     if(x>=width/3*2){
-      this.setState({editingImportance: true, scrollable: false})
+      this.setState({editingImportance: true, scrollable: false, importance: Math.min(limits.importance, this.state.importance+1)})
       Animated.timing(this.state.c, {toValue:100,duration:100}).start()
-      this.setState({importance: Math.min(limits.importance, this.state.importance+1)})
       this._interval = setInterval(()=>{
         this.setState({importance: Math.min(limits.importance, this.state.importance+1)})
       },200)
     }else if(x<=width/3){
       Animated.timing(this.state.x, {toValue:this.props.task.recurring?0:100,duration:80}).start()
-      this.props.datastore.toggleTaskRecurring(this.props.task.id)
+      this.props.store.toggleTaskRecurring(this.props.task.id)
     }else{
-      this.setState({editingDuration: true, scrollable: false})
+      this.setState({editingDuration: true, scrollable: false, duration: Math.min(limits.duration, this.state.duration+1)})
       Animated.timing(this.state.c, {toValue:100,duration:100}).start()
-      this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
       this._interval = setInterval(()=>{
         this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
       },200)
     }
   }
   handlePressOut(){
-    if(this.state.editingImportance){
-      this.props.datastore.setTaskImportance(this.props.task.id, this.state.importance)
-    }else if(this.state.editingDuration){
-      this.props.datastore.setTaskDuration(this.props.task.id, this.state.duration)
-    }
     if(this.state.editingImportance||this.state.editingDuration){
       LayoutAnimation.configureNext(animationConfig);
       if(this.state.editingImportance){
-        this.props.datastore.setTaskImportance(this.props.task.id, this.state.importance)
+        this.props.store.setTaskImportance(this.props.task, this.state.importance)
       }else{
-        this.props.datastore.setTaskDuration(this.props.task.id, this.state.duration)
+        this.props.store.setTaskDuration(this.props.task, this.state.duration)
       }
       Animated.timing(this.state.c, {toValue:0,delay:350,duration:150}).start();
       setTimeout(()=>{this.setState({scrollable: true, editingImportance: false, editingDuration:false, importance: 0, duration: 0})},500)
@@ -164,7 +158,7 @@ export class Task extends React.Component {
                 </View>
                 ):null}
                 {this.props.fontLoaded ? (
-                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?(footerItems.length==0?this.props.verticalSpace+17:6):this.props.verticalSpace}:null, !this.props.showDayIndicators?{marginTop:10}:null]}>{this.props.task.text.toUpperCase()}</Text>
+                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?(footerItems.length==0?this.props.verticalSpace+(this.props.fullWidth?5:17):6):this.props.verticalSpace}:null, !this.props.showDayIndicators?{marginTop:10}:null]}>{this.props.task.text.toUpperCase()}</Text>
                 ) : null}
                 {this.props.task.goals.length>0 ? (
                 <TaskGoals style={footerItems.length==0?{marginBottom:17}:null} color={this.props.goalColor} textColor={this.props.goalTextColor} goals={this.props.task.goals} selectGoal={this.props.selectGoal} fontLoaded={this.props.fontLoaded} />
@@ -408,7 +402,7 @@ export class TodayTask extends Task {
         leftAction={this.props.leftAction}
         selectGoal={this.props.selectGoal}
         theme={this.props.theme}
-        datastore={this.props.datastore}
+        store={this.props.store}
         fontLoaded={this.props.fontLoaded} />
     )
   }
@@ -455,7 +449,7 @@ export class TomorrowTask extends Task {
         leftAction={this.props.leftAction}
         selectGoal={this.props.selectGoal}
         theme={this.props.theme}
-        datastore={this.props.datastore}
+        store={this.props.store}
         fontLoaded={this.props.fontLoaded} />
     )
   }
@@ -504,7 +498,7 @@ export class NowTask extends Task {
           leftAction={this.props.leftAction}
           selectGoal={this.props.selectGoal}
           theme={this.props.theme}
-          datastore={this.props.datastore}
+          store={this.props.store}
           fontLoaded={this.props.fontLoaded} />
       </View>
     )
@@ -551,7 +545,7 @@ export class TodoTask extends Task {
         leftAction={this.props.leftAction}
         selectGoal={this.props.selectGoal}
         theme={this.props.theme}
-        datastore={this.props.datastore}
+        store={this.props.store}
         fontLoaded={this.props.fontLoaded} />
     )
   }
