@@ -155,7 +155,7 @@ export class GoalsList extends React.Component {
   }
   render(){
     return (
-      <View style={{height: GOALS_HEIGHT}}>
+      <View style={{height: GOALS_HEIGHT, backgroundColor: themes[this.props.theme].mainColor, borderTopWidth: 2, borderTopColor: themes[this.props.theme].goal}}>
         <ScrollView
           ref={(ref)=>{this.scrollView = ref}}
           scrollEnabled={false}
