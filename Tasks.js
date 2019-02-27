@@ -226,115 +226,6 @@ class TaskFooter extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  taskContainer: {
-    width: screenWidth,
-    paddingLeft: 18,
-    paddingRight: 18,
-  },
-  taskContainerFullWidth: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
-  task: {
-    width: screenWidth-18*2,
-    padding: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  taskFullWidth: {
-    width: screenWidth,
-    borderRadius: 0,
-    padding: 16,
-    paddingTop: 4,
-    paddingBottom: 5,
-  },
-  taskText: {
-    fontFamily: 'pt-mono-bold',
-    fontSize: 20,
-    textAlign: 'left',
-    marginTop: 2,
-    marginBottom: 3,
-  },
-  taskGoalsList: {
-    marginBottom: 1,
-    marginTop: 2,
-  },
-  taskGoal: {
-    borderRadius: 5,
-    height: 26,
-    paddingLeft: 10,
-    paddingRight: 10,
-    marginBottom: 4,
-    marginRight: 2,
-    justifyContent: 'center',
-  },
-  taskGoalText: {
-    fontSize: 12,
-    fontFamily: 'pt-mono-bold',
-  },
-  actionText: {
-    fontFamily: 'pt-mono-bold',
-    fontSize: 20,
-  },
-  taskUnderLayer: {
-    borderRadius: 8,
-    position: 'absolute',
-    left: 18,
-    width: screenWidth-18*2,
-    height: '100%',
-    justifyContent: 'center',
-    paddingLeft: 18,
-    paddingRight: 18,
-    borderWidth: 2,
-  },
-  taskUnderLayerFullWidth: {
-    borderRadius: 0,
-    left: 0,
-    width: screenWidth,
-    borderBottomWidth: 4,
-  },
-  taskPlaceholder: {
-    width: screenWidth,
-    height: '100%',
-  },
-  taskHeader: {
-    flexDirection: 'row',
-    height: 10,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginTop: 4,
-    marginBottom: 2,
-  },
-  taskFooter: {
-    flexDirection: 'row',
-    height: 10,
-    alignItems: 'center',
-    marginTop: 2,
-    marginBottom: 4,
-  },
-  taskDayIndicator: {
-    width: 5,
-    height: 5,
-    borderRadius: 5,
-    marginRight: 3,
-  },
-  taskFooterText: {
-    fontFamily: 'pt-mono-bold',
-    fontSize: 10,
-  },
-  taskFooterSeparator: {
-    width: 4,
-    height: 4,
-    borderRadius: 4,
-    marginRight: 3,
-    marginLeft: 3,
-  },
-});
-
 export class TasksList extends React.Component {
   render() {
     return (
@@ -550,3 +441,112 @@ export class TodoTask extends Task {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  taskContainer: {
+    width: screenWidth,
+    paddingLeft: 18,
+    paddingRight: 18,
+  },
+  taskContainerFullWidth: {
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+  task: {
+    width: screenWidth-18*2,
+    padding: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  taskFullWidth: {
+    width: screenWidth,
+    borderRadius: 0,
+    padding: 16,
+    paddingTop: 4,
+    paddingBottom: 5,
+  },
+  taskText: {
+    fontFamily: 'pt-mono-bold',
+    fontSize: 20,
+    textAlign: 'left',
+    marginTop: 2,
+    marginBottom: 3,
+  },
+  taskGoalsList: {
+    marginBottom: 1,
+    marginTop: 2,
+  },
+  taskGoal: {
+    borderRadius: 5,
+    height: 26,
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: 4,
+    marginRight: 2,
+    justifyContent: 'center',
+  },
+  taskGoalText: {
+    fontSize: 12,
+    fontFamily: 'pt-mono-bold',
+  },
+  actionText: {
+    fontFamily: 'pt-mono-bold',
+    fontSize: 20,
+  },
+  taskUnderLayer: {
+    borderRadius: 8,
+    position: 'absolute',
+    left: 18,
+    width: screenWidth-18*2,
+    height: '100%',
+    justifyContent: 'center',
+    paddingLeft: 18,
+    paddingRight: 18,
+    borderWidth: 2,
+  },
+  taskUnderLayerFullWidth: {
+    borderRadius: 0,
+    left: 0,
+    width: screenWidth,
+    borderBottomWidth: 4,
+  },
+  taskPlaceholder: {
+    width: screenWidth,
+    height: '100%',
+  },
+  taskHeader: {
+    flexDirection: 'row',
+    height: 10,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginTop: 4,
+    marginBottom: 2,
+  },
+  taskFooter: {
+    flexDirection: 'row',
+    height: 10,
+    alignItems: 'center',
+    marginTop: 2,
+    marginBottom: 4,
+  },
+  taskDayIndicator: {
+    width: 5,
+    height: 5,
+    borderRadius: 5,
+    marginRight: 3,
+  },
+  taskFooterText: {
+    fontFamily: 'pt-mono-bold',
+    fontSize: 10,
+  },
+  taskFooterSeparator: {
+    width: 4,
+    height: 4,
+    borderRadius: 4,
+    marginRight: 3,
+    marginLeft: 3,
+  },
+});
