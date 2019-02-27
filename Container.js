@@ -8,6 +8,7 @@ import { GoalsList } from './Goals';
 import { CountersList } from './Counters';
 import { Bar } from './Bar';
 import { Collapsible } from './Collapsible';
+import { Header } from './Header';
 
 import { animationConfig, GOALS_HEIGHT, HEADER_HEIGHT, COUNTERS_HEIGHT } from './helpers'
 import { themes } from './Themes'
@@ -152,12 +153,11 @@ export default class Container extends React.Component {
       return (
         <KeyboardAvoidingView behavior="padding" enabled>
         <View style={{width: '100%', height: '100%'}}>
-          <View style={{backgroundColor:themes[this.props.theme].mainColor,width: '100%', height: '50%',position:'absolute',top:0}}></View>
+          <View style={{backgroundColor:'#fff',width: '100%', height: '50%',position:'absolute',top:0}}></View>
           <View style={{backgroundColor:themes[this.props.theme].tomorrowColor,width: '100%', height: '50%',position:'absolute',bottom:0}}></View>
             <StatusBar backgroundColor={themes[this.props.theme].mainColor} barStyle="dark-content"/>
             <SafeAreaView style={{flex: 1,paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0}}>
-              <View style={styles.header}>
-              </View>
+              <Header theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
               <View
                 style={{flex: 1}}
                 ref={ref => this.mainView = ref}
@@ -296,9 +296,3 @@ export default class Container extends React.Component {
       );
     }
   }
-
-  const styles = StyleSheet.create({
-    header: {
-      height: HEADER_HEIGHT,
-    }
-  });
