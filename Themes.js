@@ -44,20 +44,16 @@ class Theme {
     if(typeof todayAccent !== "undefined" && todayAccent != null){
       todayBaseColor = new chroma.Color(this.todayAccent).saturate(5).set('hsl.h', '+13').brighten(.45).hex()
     }
-    this.todayTasks = chroma.scale([
-        todayBaseColor,
-      new chroma.Color(this.todayColor).saturate(.3).darken(.1).hex()]).mode('lch').colors(limits.todayTasks)
+    this.todayTasks = chroma.scale([todayBaseColor,this.todayColor]).mode('lch').colors(limits.todayTasks)
 
     var tomorrowBaseColor = new chroma.Color(this.tomorrowAccent).saturate(5).set('hsl.h', '-13').brighten(.45).hex()
-    this.tomorrowTasks = chroma.scale([
-        tomorrowBaseColor,
-      new chroma.Color(this.tomorrowColor).saturate(.3).darken(.1).hex()]).mode('lch').colors(limits.tomorrowTasks)
+    this.tomorrowTasks = chroma.scale([tomorrowBaseColor,this.tomorrowColor]).mode('lch').colors(limits.tomorrowTasks)
 
     this.todayTasksText = this.todayTasks.map((n,i)=>new chroma.Color(n).darken(2-i*.15).hex())
     this.tomorrowTasksText = this.tomorrowTasks.map((n,i)=>new chroma.Color(n).darken(2-i*.15).hex())
 
     this.todayTasksHighlight = this.todayTasks.map((n,i)=>new chroma.Color(n).brighten(.5).hex())
-    this.tomorrowTasksHighlight = this.tomorrowTasks.map((n,i)=>new chroma.Color(n).darken(.5).hex())
+    this.tomorrowTasksHighlight = this.tomorrowTasks.map((n,i)=>new chroma.Color(n).brighten(.5).hex())
 
     this.taskTodayIndicator = new chroma.Color(this.todayColor).brighten(2).saturate(.5).hex()
     this.taskTomorrowIndicator = new chroma.Color(this.tomorrowColor).brighten(2).saturate(.5).hex()
