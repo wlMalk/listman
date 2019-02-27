@@ -258,7 +258,7 @@ export default class Container extends React.Component {
                     )}
                   </View>
                   <Bar theme={this.props.theme} closed={this.state.scene!=TODAY} forTomorrow={false} date={this.props.store.getTodayDate()} count={this.props.store.getTodayTasksCount()} total={this.props.store.getTodayTasksTotal()} onPress={()=>{this.setScene(TODAY,null)}} creator={this.props.store.createTodayTask} fontLoaded={this.props.fontLoaded} ref={ref => this.todayBar = ref} />
-                  <ShadowOverlay color={themes[this.props.theme].todayColor} size={100} start={.55} end={.05} last={true} initiallyShown={true} />
+                  <ShadowOverlay color={themes[this.props.theme].todayColor} size={100} start={.6} end={.05} last={true} initiallyShown={true} />
                 </Collapsible>
                 <Collapsible alwaysOnIndices={[1]} ref={(ref)=>{this.tomorrowCollapsible = ref}} initialStage={"closed"} heights={[65,65,this.state.mainViewHeight-70-GOALS_HEIGHT-5-COUNTERS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].tomorrowColor, borderTopWidth: 5, borderTopColor:themes[this.props.theme].tomorrowAccent}}>
                   <View style={{flex:1}}>
@@ -287,7 +287,7 @@ export default class Container extends React.Component {
                     />
                   </View>
                   <Bar theme={this.props.theme} closed={this.state.scene!=TOMORROW} forTomorrow={true} date={this.props.store.getTomorrowDate()} count={this.props.store.getTomorrowTasksCount()} total={this.props.store.getTomorrowTasksTotal()} onPress={()=>{this.setScene(TOMORROW,null)}} creator={this.props.store.createTomorrowTask} fontLoaded={this.props.fontLoaded} ref={ref => this.tomorrowBar = ref} />
-                  <ShadowOverlay color={themes[this.props.theme].tomorrowColor} size={100} start={.55} end={.05} last={true} initiallyShown={true} />
+                  <ShadowOverlay color={themes[this.props.theme].tomorrowColor} size={100} start={.6} end={.05} last={true} initiallyShown={true} />
                 </Collapsible>
               </View>
             </SafeAreaView>
