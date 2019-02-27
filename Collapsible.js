@@ -26,7 +26,7 @@ export class Collapsible extends React.Component {
     }
     Animated.timing(this.state.o, {
       toValue: v,
-      duration: 150,
+      duration: 200,
     }).start()
     this.setState({stage:v})
   }
