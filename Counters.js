@@ -11,22 +11,18 @@ export class CountersList extends React.Component {
       {
         id: "ALL",
         name: "All tasks",
-        count: props.all,
         onPress: props.onAllPress,
       },{
         id: "REMAINING",
         name: "Remaining",
-        count: props.remaining,
         onPress: props.onRemainingPress,
       },{
         id: "COMPLETED",
         name: "Completed",
-        count: props.completed,
         onPress: props.onCompletedPress,
       },{
         id: "RECURRING",
         name: "Recurring",
-        count: props.recurring,
         onPress: props.onRecurringPress,
       },
     ]
@@ -34,7 +30,7 @@ export class CountersList extends React.Component {
   render(){
     return (
       <View style={[styles.countersList, {backgroundColor: themes[this.props.theme].mainColor, borderBottomColor: themes[this.props.theme].mainAccent, borderBottomWidth: 5}]}>
-        {this.list.map((counter, i) => (<Counter key={i} selected={counter.id==this.props.selected} name={counter.name} count={counter.count} onPress={counter.onPress} last={i==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />) )}
+        {this.list.map((counter, i) => (<Counter key={i} selected={counter.id==this.props.selected} name={counter.name} count={counter.id=="ALL"?this.props.all:counter.id=="REMAINING"?this.props.remaining:counter.id=="COMPLETED"?this.props.completed:counter.id=="RECURRING"?this.props.recurring:0} onPress={counter.onPress} last={i==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />) )}
       </View>
     )
   }
