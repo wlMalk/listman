@@ -46,7 +46,37 @@ export class Store {
     this.goals = {
       count: 0,
       total: 0,
-      goals: [],
+      goals: [{
+        id: "055e7529-da9b-458d-9591-c0a3adac2cf7",
+        name: "Get a job",
+        start: new Date(new Date().getFullYear()-1, 0, 1),
+        deadline: new Date(new Date().getFullYear(), 3, 28),
+        completedTasks: 4,
+        totalTasks: 15,
+        inToday: true,
+        inTomorrow: true,
+        paused: true,
+      },{
+        id: "055e7529-da9b-458d-9591-c0a3adgc2cf7",
+        name: "Get a job",
+        start: new Date(new Date().getFullYear()-1, 0, 1),
+        deadline: new Date(new Date().getFullYear(), 3, 28),
+        completedTasks: 4,
+        totalTasks: 15,
+        inToday: true,
+        inTomorrow: true,
+        paused: true,
+      },{
+        id: "055e7529-da9b-458d-9591-c0a3adac2df7",
+        name: "Get a job",
+        start: new Date(new Date().getFullYear()-1, 0, 1),
+        deadline: new Date(new Date().getFullYear(), 3, 28),
+        completedTasks: 4,
+        totalTasks: 15,
+        inToday: true,
+        inTomorrow: true,
+        paused: true,
+      },],
     }
 
     this.totals = {}
