@@ -80,5 +80,5 @@ class Theme {
 }
 
 // export const themes = [new Theme('#CD4331','#FFEEC9','#15222E','#FFFFFF','#FFA758','#37C3C8')]
-export const themes = [new Theme('#FFEEC9','#CD4331', null, null,'#FFA758','#37C3C8')]
+export const themes = [new Theme('#FFEEC9','#CD4331', '#15222E', null,'#FFA758','#37C3C8')]
 // export const themes = [new Theme('#FFEEC9','#CD4331','#15222E','#FFFFFF','#FFA758','#37C3C8')]
