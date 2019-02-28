@@ -172,9 +172,10 @@ export default class Container extends React.Component {
                   selected={this.state.selectedGoal}
                   theme={this.props.theme}
                   fontLoaded={this.props.fontLoaded} />
-                <Collapsible alwaysOnIndices={[2]} ref={(ref)=>{this.tasksCollapsible = ref}} heights={[COUNTERS_HEIGHT+5,this.state.mainViewHeight/2-GOALS_HEIGHT-HEADER_HEIGHT/2,this.state.mainViewHeight-65*2-5-GOALS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].mainColor}}>
+                <Collapsible onOpen={()=>{this.laterTasksList.scrollTo(0, true)}} onDefault={()=>{this.laterTasksList.scrollTo(0, true)}} alwaysOnIndices={[2]} ref={(ref)=>{this.tasksCollapsible = ref}} heights={[COUNTERS_HEIGHT+5,this.state.mainViewHeight/2-GOALS_HEIGHT-HEADER_HEIGHT/2,this.state.mainViewHeight-65*2-5-GOALS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].mainColor}}>
                   <View style={{flex: 1}}>
                     <TasksList
+                      ref={(ref)=>{this.laterTasksList=ref}}
                       startOffset={12}
                       endOffset={12}
                       scrollEnabled={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
@@ -214,7 +215,7 @@ export default class Container extends React.Component {
                     theme={this.props.theme}
                     fontLoaded={this.props.fontLoaded} />
                 </Collapsible>
-                <Collapsible alwaysOnIndices={[1]} flexible={true} ref={(ref)=>{this.todayCollapsible = ref}} style={{backgroundColor: themes[this.props.theme].todayColor, borderTopColor: themes[this.props.theme].todayAccent, borderTopWidth: 5, borderBottomWidth: 5, borderBottomColor:themes[this.props.theme].todayAccent}}>
+                <Collapsible onOpen={()=>{this.todayTasksList.scrollTo(0, false)}} onDefault={()=>{this.todayTasksList.scrollTo(0, false)}} alwaysOnIndices={[1]} flexible={true} ref={(ref)=>{this.todayCollapsible = ref}} style={{backgroundColor: themes[this.props.theme].todayColor, borderTopColor: themes[this.props.theme].todayAccent, borderTopWidth: 5, borderBottomWidth: 5, borderBottomColor:themes[this.props.theme].todayAccent}}>
                   <View style={{flex:1, justifyContent: 'center'}}>
                     {this.isSceneIn([HOME])?
                       this.props.store.getTodayTasksCount()>0&&this.props.store.getNowTask()!=null?(
@@ -230,9 +231,9 @@ export default class Container extends React.Component {
                       <View>
 
                       </View>
-                    )
-                    :(
+                    ):null}
                     <TasksList
+                      ref={(ref)=>{this.todayTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTodayTasks()}
                       renderItem={({item, index}) => (
@@ -255,14 +256,14 @@ export default class Container extends React.Component {
                       emptyStateColor={themes[this.props.theme].todaySecondary}
                       fontLoaded={this.props.fontLoaded}
                     />
-                    )}
                   </View>
                   <Bar theme={this.props.theme} closed={this.state.scene!=TODAY} forTomorrow={false} date={this.props.store.getTodayDate()} count={this.props.store.getTodayTasksCount()} total={this.props.store.getTodayTasksTotal()} onPress={()=>{this.setScene(TODAY,null)}} creator={this.props.store.createTodayTask} fontLoaded={this.props.fontLoaded} ref={ref => this.todayBar = ref} />
                   <ShadowOverlay color={themes[this.props.theme].todayColor} size={100} start={.6} end={.05} last={true} initiallyShown={true} />
                 </Collapsible>
-                <Collapsible alwaysOnIndices={[1]} ref={(ref)=>{this.tomorrowCollapsible = ref}} initialStage={"closed"} heights={[65,65,this.state.mainViewHeight-70-GOALS_HEIGHT-5-COUNTERS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].tomorrowColor, borderTopWidth: 5, borderTopColor:themes[this.props.theme].tomorrowAccent}}>
+                <Collapsible onOpen={()=>{this.tomorrowTasksList.scrollTo(0, false)}} onDefault={()=>{this.tomorrowTasksList.scrollTo(0, false)}} alwaysOnIndices={[1]} ref={(ref)=>{this.tomorrowCollapsible = ref}} initialStage={"closed"} heights={[65,65,this.state.mainViewHeight-70-GOALS_HEIGHT-5-COUNTERS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].tomorrowColor, borderTopWidth: 5, borderTopColor:themes[this.props.theme].tomorrowAccent}}>
                   <View style={{flex:1}}>
                     <TasksList
+                      ref={(ref)=>{this.tomorrowTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTomorrowTasks()}
                       renderItem={({item, index}) => (
