@@ -26,7 +26,14 @@ export class List extends React.Component {
     }
   }
   scrollTo(v) {
-    this.flatListRef.scrollToOffset(v)
+    if(this.flatListRef){
+      this.flatListRef.scrollToOffset(v)
+    }
+  }
+  scrollToEnd(v) {
+    if(this.flatListRef){
+      this.flatListRef.scrollToEnd(v)
+    }
   }
   handleScroll(e) {
     const startOffset = 0
