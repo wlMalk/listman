@@ -1,7 +1,7 @@
 import { LayoutAnimation } from 'react-native';
 
 export const GOALS_HEIGHT = 58
-export const HEADER_HEIGHT = 54
+export const HEADER_HEIGHT = 56
 export const COUNTERS_HEIGHT = 52
 
 export function pad(n, width, z) {
