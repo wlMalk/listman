@@ -227,9 +227,16 @@ class TaskFooter extends React.Component {
 }
 
 export class TasksList extends React.Component {
+  scrollTo(y, animated) {
+    this.list.scrollTo({y: y, animated: animated})
+  }
+  scrollToEnd(animated) {
+    this.list.scrollToEnd({animated: animated})
+  }
   render() {
     return (
       <List
+        ref={(ref) => {this.list = ref}}
         style={{flex: 1}}
         scrollEnabled={this.props.scrollEnabled}
         data={this.props.tasks}
