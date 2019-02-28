@@ -18,9 +18,9 @@ export default class App extends React.Component {
 
     const store = new Store(today, tomorrow, (store)=>{this.setState({store:store})})
 
-    store.onCreateTodayTask = () => {this.container.setViewingToday()}
-    store.onCreateTomorrowTask = () => {this.container.setViewingTomorrow()}
-    store.onCreateLaterTask = () => {this.container.setViewingLater()}
+    store.onCreateTodayTask = () => {this.container.setViewingToday();this.container.todayTasksList.scrollTo(0, true)}
+    store.onCreateTomorrowTask = () => {this.container.setViewingTomorrow();this.container.tomorrowTasksList.scrollTo(0, true)}
+    store.onCreateLaterTask = () => {this.container.setViewingLater();this.container.laterTasksList.scrollTo(0, true)}
 
     this.state = {
       fontLoaded: false,
