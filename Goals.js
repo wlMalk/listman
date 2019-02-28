@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
     paddingRight: 4,
     paddingTop: 5,
-    paddingBottom: 5,
+    paddingBottom: 7,
   },
   goalSelected: {
     shadowColor: "#000",
