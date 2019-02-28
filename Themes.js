@@ -25,7 +25,7 @@ class Theme {
     // this.completedText = new chroma.Color(this.mainColor).darken(2.25).saturate(.3).hex()
     // this.completedSeparator = new chroma.Color(this.mainColor).darken(.5).saturate(.3).hex()
 
-    this.todaySecondary = new chroma.Color(this.todayColor).darken(1.5).saturate(.5).hex()
+    this.todaySecondary = new chroma.Color(this.todayColor).darken().saturate(.5).hex()
     this.tomorrowSecondary = new chroma.Color(this.tomorrowColor).brighten(1.5).saturate(.5).hex()
 
     if(typeof todayAccent !== "undefined" && todayAccent != null){
