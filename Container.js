@@ -38,6 +38,11 @@ export default class Container extends React.Component {
       }
       this.selectGoal = this.selectGoal.bind(this)
     }
+    setViewingHome() {
+      if(this.state.scene!=HOME){
+        this.setScene(HOME, null)
+      }
+    }
     setViewingToday() {
       if(this.state.scene!=TODAY){
         this.setScene(TODAY, null)
@@ -57,7 +62,7 @@ export default class Container extends React.Component {
       if(this.state.editingTaskText){
         Keyboard.dismiss()
       }
-      if(scene!=this.state.scene||(scene==this.state.scene&&payload!=this.state.scenePayload&&payload!=null)){
+      if(scene!=HOME&&(scene!=this.state.scene||(scene==this.state.scene&&payload!=this.state.scenePayload&&payload!=null))){
         if(scene==TODAY){
           this.todayCollapsible.open()
           this.tomorrowCollapsible.close()
@@ -157,7 +162,7 @@ export default class Container extends React.Component {
           <View style={{backgroundColor:themes[this.props.theme].tomorrowColor,width: '100%', height: '50%',position:'absolute',bottom:0}}></View>
             <StatusBar backgroundColor={themes[this.props.theme].mainColor} barStyle="dark-content"/>
             <SafeAreaView style={{flex: 1,paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0}}>
-              <Header theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
+              <Header onLogoPress={()=>{this.setViewingHome()}} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
               <View
                 style={{flex: 1}}
                 ref={ref => this.mainView = ref}
@@ -186,8 +191,8 @@ export default class Container extends React.Component {
                           last={index==mainTasksTotal}
                           key={item.id}
                           task={item}
-                          rightAction={(item)=>{}}
-                          leftAction={(item)=>{}}
+                          rightAction={this.props.store.scheduleTaskForTomorrow}
+                          leftAction={this.props.store.scheduleTaskForToday}
                           selectGoal={this.selectGoal}
                           theme={this.props.theme}
                           store={this.props.store}
@@ -220,9 +225,10 @@ export default class Container extends React.Component {
                     {this.isSceneIn([HOME])?
                       this.props.store.getTodayTasksCount()>0&&this.props.store.getNowTask()!=null?(
                       <NowTask
+                        scrollable={true}
                         task={this.props.store.getNowTask()}
-                        rightAction={(item)=>{}}
-                        leftAction={(item)=>{}}
+                        rightAction={this.props.store.scheduleTaskForTomorrow}
+                        leftAction={this.props.store.completeTask}
                         selectGoal={this.selectGoal}
                         theme={this.props.theme}
                         store={this.props.store}
@@ -238,6 +244,7 @@ export default class Container extends React.Component {
                       tasks={this.props.store.getTodayTasks()}
                       renderItem={({item, index}) => (
                         <TodayTask
+                          scrollable={true}
                           last={index==this.props.store.getTodayTasksCount()}
                           key={item.id}
                           task={item}
@@ -268,12 +275,13 @@ export default class Container extends React.Component {
                       tasks={this.props.store.getTomorrowTasks()}
                       renderItem={({item, index}) => (
                         <TomorrowTask
+                          scrollable={true}
                           last={index==this.props.store.getTomorrowTasksCount()}
                           key={item.id}
                           task={item}
                           index={index}
-                          rightAction={(item)=>{}}
-                          leftAction={(item)=>{}}
+                          rightAction={this.props.store.scheduleTaskForLater}
+                          leftAction={this.props.store.scheduleTaskForToday}
                           selectGoal={this.selectGoal}
                           theme={this.props.theme}
                           store={this.props.store}
