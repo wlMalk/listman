@@ -9,7 +9,7 @@ export class Header extends React.Component {
   render() {
     return (
       <View style={styles.header}>
-        <TouchableOpacity style={styles.logoContainer} activeOpacity={.5}>
+        <TouchableOpacity onPress={this.props.onLogoPress} style={styles.logoContainer} activeOpacity={.5}>
           {this.props.fontLoaded ? (
           <Text style={[styles.logo, {color: themes[this.props.theme].mainTitles}]}>{"LISTISTIST"}</Text>
           ):null}
