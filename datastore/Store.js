@@ -24,6 +24,7 @@ export const SCHEDULE_TYPES = {
   RESCHEDULED_FROM_TOMORROW: 9,
   RESCHEDULED_FROM_LATER: 10,
   REDOING: 11,
+  UNDOING: 12,
 }
 
 export class Store {
@@ -46,37 +47,7 @@ export class Store {
     this.goals = {
       count: 0,
       total: 0,
-      goals: [{
-        id: "055e7529-da9b-458d-9591-c0a3adac2cf7",
-        name: "Get a job",
-        start: new Date(new Date().getFullYear()-1, 0, 1),
-        deadline: new Date(new Date().getFullYear(), 3, 28),
-        completedTasks: 4,
-        totalTasks: 15,
-        inToday: true,
-        inTomorrow: true,
-        paused: true,
-      },{
-        id: "055e7529-da9b-458d-9591-c0a3adgc2cf7",
-        name: "Get a job",
-        start: new Date(new Date().getFullYear()-1, 0, 1),
-        deadline: new Date(new Date().getFullYear(), 3, 28),
-        completedTasks: 4,
-        totalTasks: 15,
-        inToday: true,
-        inTomorrow: true,
-        paused: true,
-      },{
-        id: "055e7529-da9b-458d-9591-c0a3adac2df7",
-        name: "Get a job",
-        start: new Date(new Date().getFullYear()-1, 0, 1),
-        deadline: new Date(new Date().getFullYear(), 3, 28),
-        completedTasks: 4,
-        totalTasks: 15,
-        inToday: true,
-        inTomorrow: true,
-        paused: true,
-      },],
+      goals: [],
     }
 
     this.totals = {}
@@ -178,19 +149,41 @@ export class Store {
   redoCompletedTaskTomorrow(task){
 
   }
-  scheduleTaskForTomorrow(task){
-
+  scheduleTaskForBucket(task, toBucket, scheduleType, scheduleReason){
+    var bucket = task.bucket
+    this.tasks[bucket].splice(this.tasks[bucket].findIndex((t)=>t.id==task.id),1);
+    this.tasks[toBucket].unshift(task)
+    if(toBucket==BUCKETS.TODAY){
+      this.counts[toBucket] = this.counts[toBucket] + 1
+    }
+    if(bucket==BUCKETS.TODAY){
+      this.counts[bucket] = this.counts[bucket] - 1
+    }
+    this.totals[toBucket] = this.totals[toBucket] + 1
+    this.totals[bucket] = this.totals[bucket] - 1
+    task.bucket = toBucket
   }
   scheduleTaskForToday(task){
-
+    this.scheduleTaskForBucket(task, BUCKETS.TODAY)
+    this.sortTodayTasks()
+    this.setter(this)
+  }
+  scheduleTaskForTomorrow(task){
+    this.scheduleTaskForBucket(task, BUCKETS.TOMORROW)
+    this.sortTomorrowTasks()
+    this.setter(this)
   }
   scheduleTaskForLater(task){
-
+    this.scheduleTaskForBucket(task, BUCKETS.LATER)
+    this.sortLaterTasks()
+    this.setter(this)
   }
 
   // edit task
   setTaskText(task, text){
-
+    task.text = text
+    this.sort()
+    this.setter(this)
   }
   setTaskImportance(task, importance){
     task.importance = importance
@@ -202,11 +195,20 @@ export class Store {
     this.sort()
     this.setter(this)
   }
+  setTaskTime(task, time){
+    task.time = time
+    this.sort()
+    this.setter(this)
+  }
   setTaskRecurring(task, recurring){
-
+    task.recurring = recurring
+    this.sort()
+    this.setter(this)
   }
   setTaskGoals(task, goals){
-
+    task.goals = goals
+    this.sort()
+    this.setter(this)
   }
 
   deleteTask(task){
@@ -303,6 +305,15 @@ export class Store {
   sort(){
 
   }
+  sortTodayTasks(){
+
+  }
+  sortTomorrowTasks(){
+
+  }
+  sortLaterTasks(){
+
+  }
 
   save(){
 
@@ -312,6 +323,37 @@ export class Store {
   }
 
   load(){
+    this.goals.goals = [{
+      id: "055e7529-da9b-458d-9591-c0a3adac2cf7",
+      name: "Get a job",
+      start: new Date(new Date().getFullYear()-1, 0, 1),
+      deadline: new Date(new Date().getFullYear(), 3, 28),
+      completedTasks: 4,
+      totalTasks: 15,
+      inToday: true,
+      inTomorrow: true,
+      paused: true,
+    },{
+      id: "055e7529-da9b-458d-9591-c0a3adgc2cf7",
+      name: "Get a job",
+      start: new Date(new Date().getFullYear()-1, 0, 1),
+      deadline: new Date(new Date().getFullYear(), 3, 28),
+      completedTasks: 4,
+      totalTasks: 15,
+      inToday: true,
+      inTomorrow: true,
+      paused: true,
+    },{
+      id: "055e7529-da9b-458d-9591-c0a3adac2df7",
+      name: "Get a job",
+      start: new Date(new Date().getFullYear()-1, 0, 1),
+      deadline: new Date(new Date().getFullYear(), 3, 28),
+      completedTasks: 4,
+      totalTasks: 15,
+      inToday: true,
+      inTomorrow: true,
+      paused: true,
+    }]
     this.sort()
   }
 }
