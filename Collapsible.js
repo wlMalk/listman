@@ -17,6 +17,16 @@ export class Collapsible extends React.Component {
     }
   }
   setValue(v, callback){
+    if(v==this.state.stage){
+      return
+    }
+    if(v==1&&this.props.onOpen){
+      this.props.onOpen(this.state.stage)
+    }else if(v==0&&this.props.onDefault){
+      this.props.onDefault(this.state.stage)
+    }else if(v==-1&&this.props.onClose){
+      this.props.onClose(this.state.stage)
+    }
     if(!this.props.flexible){
       Animated.spring(this.state.c, {
          toValue: v,
