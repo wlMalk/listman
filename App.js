@@ -16,7 +16,8 @@ export default class App extends React.Component {
     var tomorrow = new Date(today.getTime())
     tomorrow.setDate(today.getDate() + 1);
 
-    const store = new Store(today, tomorrow, (store)=>{this.setState({store:store})})
+    var store = new Store(today, tomorrow, (store)=>{this.setState({store:store})})
+    store.load()
 
     store.onCreateTodayTask = () => {this.container.setViewingToday();this.container.todayTasksList.scrollTo(0, true)}
     store.onCreateTomorrowTask = () => {this.container.setViewingTomorrow();this.container.tomorrowTasksList.scrollTo(0, true)}
@@ -36,7 +37,6 @@ export default class App extends React.Component {
       'pt-mono-bold': require('./assets/fonts/PT_Mono/bold.ttf'),
     });
     this.setState({ fontLoaded: true });
-    this.state.store.load()
   }
   render() {
     return (
