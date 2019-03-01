@@ -1,5 +1,4 @@
 import * as chroma from 'chroma-js'
-import { limits } from './helpers'
 
 class Theme {
   constructor(mainColor, todayColor, tomorrowColor, mainAccent, todayAccent, tomorrowAccent){
@@ -44,10 +43,10 @@ class Theme {
     if(typeof todayAccent !== "undefined" && todayAccent != null){
       todayBaseColor = new chroma.Color(this.todayAccent).saturate(5).set('hsl.h', '+13').brighten(.45).hex()
     }
-    this.todayTasks = chroma.scale([todayBaseColor,this.todayColor]).mode('lch').colors(limits.todayTasks)
+    this.todayTasks = chroma.scale([todayBaseColor,this.todayColor]).mode('lch').colors(tasksLimit)
 
     var tomorrowBaseColor = new chroma.Color(this.tomorrowAccent).saturate(5).set('hsl.h', '-13').brighten(.45).hex()
-    this.tomorrowTasks = chroma.scale([tomorrowBaseColor,this.tomorrowColor]).mode('lch').colors(limits.tomorrowTasks)
+    this.tomorrowTasks = chroma.scale([tomorrowBaseColor,this.tomorrowColor]).mode('lch').colors(tasksLimit)
 
     this.todayTasksText = this.todayTasks.map((n,i)=>new chroma.Color(n).darken(2-i*.15).hex())
     this.tomorrowTasksText = this.tomorrowTasks.map((n,i)=>new chroma.Color(n).darken(2-i*.15).hex())
@@ -79,6 +78,13 @@ class Theme {
   }
 }
 
+export var themes = []
+var tasksLimit = 0
+
+export function initThemes(limit){
+  tasksLimit = limit
+  themes = [new Theme('#FFEEC9','#CD4331', '#15222E', null,'#FFA758','#37C3C8')]
+}
+
 // export const themes = [new Theme('#CD4331','#FFEEC9','#15222E','#FFFFFF','#FFA758','#37C3C8')]
-export const themes = [new Theme('#FFEEC9','#CD4331', '#15222E', null,'#FFA758','#37C3C8')]
 // export const themes = [new Theme('#FFEEC9','#CD4331','#15222E','#FFFFFF','#FFA758','#37C3C8')]
