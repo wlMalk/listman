@@ -29,8 +29,12 @@ export class CountersList extends React.Component {
       },
     ]
   }
+  componentDidUpdate(prevProps) {
+    if(this.props.selected!=prevProps.selected&&this.props.selected!=null){
+      this.listRef.scrollToIndex(this.list.findIndex((counter)=>counter.id===this.props.selected))
+    }
+  }
   render(){
-    console.log(this.list.length);
     return (
       <View style={[styles.countersListContainer, {backgroundColor: themes[this.props.theme].mainColor, borderBottomColor: themes[this.props.theme].mainAccent, borderBottomWidth: 5}]}>
         <View style={styles.countersList}>
@@ -47,14 +51,14 @@ export class CountersList extends React.Component {
               <Counter selected={item.id==this.props.selected} name={item.name} count={item.id=="ALL"?this.props.all:item.id=="REMAINING"?this.props.remaining:item.id=="COMPLETED"?this.props.completed:item.id=="RECURRING"?this.props.recurring:0} onPress={item.onPress} last={index==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
             )}
             overlayColor={themes[this.props.theme].mainColor}
-            overlaySize={35}
-            emptyState="no goals yet"
+            overlaySize={25}
+            emptyState=""
             emptyStateSize={14}
             emptyStateColor="#000"
             fontLoaded={this.props.fontLoaded} />
         </View>
         {this.props.fontLoaded ? (
-        <TouchableOpacity activeOpacity={.5} onPress={()=>{LayoutAnimation.configureNext(animationConfig);this.props.creator()}} style={{marginLeft:18,alignItems:'flex-end',justifyContent:'center',bottom:5, paddingRight: 18,width:COUNTERS_HEIGHT,height:COUNTERS_HEIGHT,textAlign:'right'}}><Text style={{color: themes[this.props.theme].mainTitles,fontFamily: 'pt-mono-bold',fontSize:40}}>+</Text></TouchableOpacity>
+        <TouchableOpacity activeOpacity={.5} onPress={()=>{LayoutAnimation.configureNext(animationConfig);this.props.creator()}} style={{marginLeft:10,alignItems:'flex-end',justifyContent:'center',bottom:5, paddingRight: 18,width:COUNTERS_HEIGHT,height:COUNTERS_HEIGHT,textAlign:'right'}}><Text style={{color: themes[this.props.theme].mainTitles,fontFamily: 'pt-mono-bold',fontSize:40}}>+</Text></TouchableOpacity>
         ) : null }
       </View>
     )
@@ -110,14 +114,14 @@ const styles = StyleSheet.create({
   },
   counterCount: {
     fontFamily: 'pt-mono-bold',
-    fontSize: 14,
+    fontSize: 16,
     textAlign: "center",
   },
   separator: {
     height: (COUNTERS_HEIGHT-5)/2,
     width: 2,
-    marginRight: 2,
-    marginLeft: 2,
+    marginRight: 6,
+    marginLeft: 6,
     marginTop: (COUNTERS_HEIGHT-5)/4,
   }
 });
