@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { themes } from './Themes'
 import { COUNTERS_HEIGHT } from './helpers'
 
+import { List } from './List';
+
 export class CountersList extends React.Component {
   constructor(props) {
     super(props)
@@ -28,9 +30,32 @@ export class CountersList extends React.Component {
     ]
   }
   render(){
+    console.log(this.list.length);
     return (
-      <View style={[styles.countersList, {backgroundColor: themes[this.props.theme].mainColor, borderBottomColor: themes[this.props.theme].mainAccent, borderBottomWidth: 5}]}>
-        {this.list.map((counter, i) => (<Counter key={i} selected={counter.id==this.props.selected} name={counter.name} count={counter.id=="ALL"?this.props.all:counter.id=="REMAINING"?this.props.remaining:counter.id=="COMPLETED"?this.props.completed:counter.id=="RECURRING"?this.props.recurring:0} onPress={counter.onPress} last={i==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />) )}
+      <View style={[styles.countersListContainer, {backgroundColor: themes[this.props.theme].mainColor, borderBottomColor: themes[this.props.theme].mainAccent, borderBottomWidth: 5}]}>
+        <View style={styles.countersList}>
+          <List
+            ref={(ref)=>{this.listRef = ref}}
+            style={[styles.countersList]}
+            data={this.list}
+            keyExtractor={counter => counter.id}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            initialNumToRender={4}
+            renderItem={({item, index}) => (
+              <Counter selected={item.id==this.props.selected} name={item.name} count={item.id=="ALL"?this.props.all:item.id=="REMAINING"?this.props.remaining:item.id=="COMPLETED"?this.props.completed:item.id=="RECURRING"?this.props.recurring:0} onPress={item.onPress} last={index==this.list.length-1} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
+            )}
+            overlayColor={themes[this.props.theme].mainColor}
+            overlaySize={35}
+            emptyState="no goals yet"
+            emptyStateSize={14}
+            emptyStateColor="#000"
+            fontLoaded={this.props.fontLoaded} />
+        </View>
+        {this.props.fontLoaded ? (
+        <TouchableOpacity activeOpacity={.5} onPress={()=>{LayoutAnimation.configureNext(animationConfig);this.props.creator()}} style={{marginLeft:18,alignItems:'flex-end',justifyContent:'center',bottom:5, paddingRight: 18,width:COUNTERS_HEIGHT,height:COUNTERS_HEIGHT,textAlign:'right'}}><Text style={{color: themes[this.props.theme].mainTitles,fontFamily: 'pt-mono-bold',fontSize:40}}>+</Text></TouchableOpacity>
+        ) : null }
       </View>
     )
   }
@@ -57,16 +82,21 @@ class Counter extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  countersListContainer: {
+    flexDirection: "row",
+    paddingLeft: 18,
+    height: COUNTERS_HEIGHT,
+  },
   countersList: {
     flexDirection: "row",
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  counter: {
     flex: 1,
     height: COUNTERS_HEIGHT-5,
-    paddingLeft: 8,
-    paddingRight: 8,
+  },
+  counter: {
+    // width: 100,
+    height: COUNTERS_HEIGHT-5,
+    paddingLeft: 20,
+    paddingRight: 20,
     justifyContent: 'center',
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
@@ -86,8 +116,8 @@ const styles = StyleSheet.create({
   separator: {
     height: (COUNTERS_HEIGHT-5)/2,
     width: 2,
-    marginRight: 3,
-    marginLeft: 3,
+    marginRight: 2,
+    marginLeft: 2,
     marginTop: (COUNTERS_HEIGHT-5)/4,
   }
 });
