@@ -63,38 +63,42 @@ export class Task extends React.Component {
     }
   }
   handleLongPress(event){
-    const width = screenWidth - 18*2;
-    var x = event.nativeEvent.pageX - 18;
-    LayoutAnimation.configureNext(animationConfig);
-    if(x>=width/3*2){
-      this.setState({editingImportance: true, scrollable: false, importance: Math.min(limits.importance, this.state.importance+1)})
-      Animated.timing(this.state.c, {toValue:100,duration:100}).start()
-      this._interval = setInterval(()=>{
-        this.setState({importance: Math.min(limits.importance, this.state.importance+1)})
-      },200)
-    }else if(x<=width/3){
-      Animated.timing(this.state.x, {toValue:this.props.task.recurring?0:100,duration:80}).start()
-      this.props.store.toggleTaskRecurring(this.props.task.id)
-    }else{
-      this.setState({editingDuration: true, scrollable: false, duration: Math.min(limits.duration, this.state.duration+1)})
-      Animated.timing(this.state.c, {toValue:100,duration:100}).start()
-      this._interval = setInterval(()=>{
-        this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
-      },200)
+    if(!this.props.task.isNew){
+      const width = screenWidth - 18*2;
+      var x = event.nativeEvent.pageX - 18;
+      LayoutAnimation.configureNext(animationConfig);
+      if(x>=width/3*2){
+        this.setState({editingImportance: true, scrollable: false, importance: Math.min(limits.importance, this.state.importance+1)})
+        Animated.timing(this.state.c, {toValue:100,duration:100}).start()
+        this._interval = setInterval(()=>{
+          this.setState({importance: Math.min(limits.importance, this.state.importance+1)})
+        },200)
+      }else if(x<=width/3){
+        Animated.timing(this.state.x, {toValue:this.props.task.recurring?0:100,duration:80}).start()
+        this.props.store.toggleTaskRecurring(this.props.task.id)
+      }else{
+        this.setState({editingDuration: true, scrollable: false, duration: Math.min(limits.duration, this.state.duration+1)})
+        Animated.timing(this.state.c, {toValue:100,duration:100}).start()
+        this._interval = setInterval(()=>{
+          this.setState({duration: Math.min(limits.duration, this.state.duration+1)})
+        },200)
+      }
     }
   }
   handlePressOut(){
-    if(this.state.editingImportance||this.state.editingDuration){
-      LayoutAnimation.configureNext(animationConfig);
-      if(this.state.editingImportance){
-        this.props.store.setTaskImportance(this.props.task, this.state.importance)
-      }else{
-        this.props.store.setTaskDuration(this.props.task, this.state.duration)
-      }
-      Animated.timing(this.state.c, {toValue:0,delay:350,duration:150}).start();
-      setTimeout(()=>{this.setState({scrollable: true, editingImportance: false, editingDuration:false, importance: 0, duration: 0})},500)
-      if(this._interval!=null){
-        clearInterval(this._interval)
+    if(!this.props.task.isNew){
+      if(this.state.editingImportance||this.state.editingDuration){
+        LayoutAnimation.configureNext(animationConfig);
+        if(this.state.editingImportance){
+          this.props.store.setTaskImportance(this.props.task, this.state.importance)
+        }else{
+          this.props.store.setTaskDuration(this.props.task, this.state.duration)
+        }
+        Animated.timing(this.state.c, {toValue:0,delay:350,duration:150}).start();
+        setTimeout(()=>{this.setState({scrollable: true, editingImportance: false, editingDuration:false, importance: 0, duration: 0})},500)
+        if(this._interval!=null){
+          clearInterval(this._interval)
+        }
       }
     }
   }
@@ -356,6 +360,9 @@ export class TomorrowTask extends Task {
 export class GoalTask extends Task {}
 
 export class NowTask extends Task {
+  componentDidMount(){
+    console.log(4)
+  }
   leftEnabled() {
     return true
   }
@@ -363,42 +370,46 @@ export class NowTask extends Task {
     return true
   }
   render() {
+    console.log(this.props.task.id)
     return (
-      <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
-        <Task
-          scrollable={this.props.scrollable}
-          index={0}
-          last={false}
-          leftEnabled={this.leftEnabled()}
-          rightEnabled={this.rightEnabled()}
-          task={this.props.task}
-          showDayIndicators={false}
-          verticalSpace={5}
-          color={themes[this.props.theme].todayTasks[0]}
-          borderColor={themes[this.props.theme].todayTasksHighlight[0]}
-          highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
-          textColor={themes[this.props.theme].todayTasksText[0]}
-          textFontSize={18}
-          rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
-          leftText={this.props.leftText?this.props.leftText:"Completed"}
-          rightColor={themes[this.props.theme].tomorrowColor}
-          leftColor={themes[this.props.theme].todaySecondary}
-          rightBorderColor={themes[this.props.theme].tomorrowAccent}
-          leftBorderColor={themes[this.props.theme].todayAccent}
-          rightTextColor={themes[this.props.theme].tomorrowAccent}
-          leftTextColor={themes[this.props.theme].todayAccent}
-          footerItemColor={themes[this.props.theme].todayTasksText[0]}
-          footerItemSize={10}
-          footerSeparatorColor={themes[this.props.theme].todayTasksHighlight[0]}
-          goalColor={themes[this.props.theme].todayTasksText[0]}
-          goalTextColor={"#fff"}
-          rightAction={this.props.rightAction}
-          leftAction={this.props.leftAction}
-          selectGoal={this.props.selectGoal}
-          theme={this.props.theme}
-          store={this.props.store}
-          fontLoaded={this.props.fontLoaded} />
-      </View>
+      <View style={{height: '100%'}}>
+        <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
+          <Task
+            scrollable={this.props.scrollable}
+            index={0}
+            last={false}
+            leftEnabled={this.leftEnabled()}
+            rightEnabled={this.rightEnabled()}
+            task={this.props.task}
+            showDayIndicators={false}
+            verticalSpace={5}
+            color={themes[this.props.theme].todayTasks[0]}
+            borderColor={themes[this.props.theme].todayTasksHighlight[0]}
+            highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
+            textColor={themes[this.props.theme].todayTasksText[0]}
+            textFontSize={18}
+            rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
+            leftText={this.props.leftText?this.props.leftText:"Completed"}
+            rightColor={themes[this.props.theme].tomorrowColor}
+            leftColor={themes[this.props.theme].todaySecondary}
+            rightBorderColor={themes[this.props.theme].tomorrowAccent}
+            leftBorderColor={themes[this.props.theme].todayAccent}
+            rightTextColor={themes[this.props.theme].tomorrowAccent}
+            leftTextColor={themes[this.props.theme].todayAccent}
+            footerItemColor={themes[this.props.theme].todayTasksText[0]}
+            footerItemSize={10}
+            footerSeparatorColor={themes[this.props.theme].todayTasksHighlight[0]}
+            goalColor={themes[this.props.theme].todayTasksText[0]}
+            goalTextColor={"#fff"}
+            rightAction={this.props.rightAction}
+            leftAction={this.props.leftAction}
+            selectGoal={this.props.selectGoal}
+            theme={this.props.theme}
+            store={this.props.store}
+            fontLoaded={this.props.fontLoaded} />
+          </View>
+          <View style={{height: 60}}></View>
+        </View>
     )
   }
 }
