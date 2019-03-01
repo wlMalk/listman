@@ -96,11 +96,7 @@ export function getNumberOfLines(text, fontSize, fontConstant, containerWidth){
 }
 
 export const limits = {
-  todayTasks: 10,
-  tomorrowTasks: 10,
-  timeForChanges: 10,
   importance: 10,
-  duration: 10,
   textLength: 100,
 }
 
