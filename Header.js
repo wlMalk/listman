@@ -27,15 +27,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     height: HEADER_HEIGHT,
     flexDirection: 'row',
-    paddingLeft: 6,
-    paddingRight: 6,
+    paddingLeft: 18,
+    paddingRight: 18,
   },
   logoContainer: {
     flex: 1,
     height: HEADER_HEIGHT,
     justifyContent: 'center',
     alignItems: 'flex-start',
-    paddingLeft: 16,
   },
   logo: {
     fontFamily: 'pt-mono-bold',
@@ -43,7 +42,7 @@ const styles = StyleSheet.create({
   },
   button: {
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     width: 60,
     height: HEADER_HEIGHT,
   }
