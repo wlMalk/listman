@@ -91,6 +91,7 @@ export class GoalsList extends React.Component {
       scroll: 0,
       titleWidth: 0,
       titleShown: true,
+      overlayNotShown: true,
       dragging: false,
       momentum: false,
     }
@@ -120,6 +121,7 @@ export class GoalsList extends React.Component {
     if(contentOffset==this.state.titleWidth&&this.state.titleShown&&this.scrollToSelectedGoal){
       this.list.scrollToIndex(this.props.goals.findIndex((goal)=>goal.id===this.props.selected))
       this.setState({titleShown: false})
+      setTimeout(()=>{this.setState({overlayNotShown: false})},150)
       this.scrollToSelectedGoal = false
     }
   }
@@ -146,10 +148,11 @@ export class GoalsList extends React.Component {
     const contentOffset = e.nativeEvent.contentOffset.x
     if(contentOffset>0&&this.state.titleShown&&(this.state.dragging||this.state.momentum)){
       this.setState({titleShown: false})
+      setTimeout(()=>{this.setState({overlayNotShown: false})},150)
       this.scrollView.scrollTo({x: this.state.titleWidth, animated: true})
       // this.list.scrollTo({x:0, animated: false})
     }else if(contentOffset<=0&&!this.state.titleShown&&(this.state.dragging||this.state.momentum)){
-      this.setState({titleShown: true})
+      this.setState({titleShown: true, overlayNotShown: true})
       this.scrollView.scrollTo({x: 0, animated: true})
     }
   }
@@ -166,18 +169,24 @@ export class GoalsList extends React.Component {
           onScroll={this.handleScroll}
           onMomentumScrollEnd={this.handleScrollEnd}
           scrollEventThrottle={1}>
-          <View onLayout={(e)=>{this.setState({titleWidth: e.nativeEvent.layout.width})}} style={{justifyContent: 'center', alignItems: 'center', paddingLeft: 18*2, paddingRight: 18}}>
+          <View onLayout={(e)=>{this.setState({titleWidth: e.nativeEvent.layout.width})}} style={{flexDirection: 'row', zIndex: 1}}>
+            <View style={{justifyContent: 'center', alignItems: 'center', paddingLeft: 18, marginRight: 12}}>
+              {this.props.fontLoaded ? (
+              <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>GOALS</Text>
+              ) : null}
+              {this.props.fontLoaded ? (
+              <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>10</Text>
+              ) : null}
+            </View>
             {this.props.fontLoaded ? (
-            <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>GOALS</Text>
-            ) : null}
-            {this.props.fontLoaded ? (
-            <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>10</Text>
-            ) : null}
+              <TouchableOpacity activeOpacity={.5} onPress={()=>{LayoutAnimation.configureNext(animationConfig);this.props.creator()}} style={{alignItems:'center',justifyContent:'center',width:44,height:GOALS_HEIGHT,textAlign:'right'}}><Text style={{color: themes[this.props.theme].mainTitles,fontFamily: 'pt-mono-bold',fontSize:34}}>+</Text></TouchableOpacity>
+            ) : null }
           </View>
           <List
+            overflowVisible={true}
             ref={(ref)=>{this.list = ref}}
             onScroll={this.handleListScroll}
-            style={[styles.goalsList, {width: screenWidth-this.state.titleWidth+this.state.scroll}]}
+            style={[styles.goalsList, {zIndex:2, width: screenWidth-this.state.titleWidth+this.state.scroll}]}
             data={this.props.goals}
             keyExtractor={goal => goal.id}
             horizontal={true}
@@ -191,6 +200,7 @@ export class GoalsList extends React.Component {
             renderItem={({item, index}) => (
               <Goal onPress={()=>{this.props.selectGoal(item.id)}} style={[index==0?{paddingLeft: 18}:null, index==this.props.goals.length-1?{paddingRight: 18}:null]} theme={this.props.theme} goal={item} selected={this.props.selected&&this.props.selected==item.id} fontLoaded={this.props.fontLoaded} />
             )}
+            noStartOverlay={this.state.overlayNotShown}
             overlayColor={themes[this.props.theme].mainColor}
             overlaySize={35}
             emptyState="no goals yet"
