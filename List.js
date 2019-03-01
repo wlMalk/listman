@@ -68,13 +68,14 @@ export class List extends React.Component {
     return (
 
       <View
-        style={[style, {flex: 1, justifyContent: 'center'}]}
+        style={[style, {flex: 1, justifyContent: 'center', overflow: this.props.overflowVisible?'visible':'hidden'}]}
         onLayout={(e)=>{
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
         {this.props.data.length>0?(
         <FlatList
-          contentContainerStyle={!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}}
+          style={{overflow: this.props.overflowVisible?'visible':'hidden'}}
+          contentContainerStyle={[!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}, {overflow: this.props.overflowVisible?'visible':'hidden'}]}
           nestedScrollEnabled={true}
           onContentSizeChange={(contentWidth, contentHeight)=>{
             this.contentSize = !this.props.horizontal?contentHeight:contentWidth
