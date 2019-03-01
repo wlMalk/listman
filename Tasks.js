@@ -360,9 +360,6 @@ export class TomorrowTask extends Task {
 export class GoalTask extends Task {}
 
 export class NowTask extends Task {
-  componentDidMount(){
-    console.log(4)
-  }
   leftEnabled() {
     return true
   }
@@ -370,7 +367,6 @@ export class NowTask extends Task {
     return true
   }
   render() {
-    console.log(this.props.task.id)
     return (
       <View style={{height: '100%'}}>
         <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
