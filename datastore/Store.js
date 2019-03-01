@@ -1,5 +1,4 @@
 import Task from './Task'
-import { limits } from '../helpers'
 
 export const ALL = "ALL"
 export const GOALS = "GOALS"
@@ -63,6 +62,9 @@ export class Store {
 
     this.settings = {
       theme: 0,
+      tasksPerDay: 10,
+      timeForChanges: 10,
+      duration: 60*4,
     }
 
     this.createTodayTask = this.createTodayTask.bind(this)
