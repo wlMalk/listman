@@ -242,6 +242,7 @@ export class TasksList extends React.Component {
       <List
         ref={(ref) => {this.list = ref}}
         style={{flex: 1}}
+        topOverScrollColor={this.props.topOverScrollColor}
         scrollEnabled={this.props.scrollEnabled}
         data={this.props.tasks}
         keyExtractor={task => task.id}
@@ -369,7 +370,7 @@ export class NowTask extends Task {
   render() {
     return (
       <View style={{height: '100%'}}>
-        <View style={{flex:1, paddingTop: 12, justifyContent: 'center'}}>
+        <View style={{flex:1, justifyContent: 'center'}}>
           <Task
             scrollable={this.props.scrollable}
             index={0}
