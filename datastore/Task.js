@@ -15,7 +15,7 @@ export default class Task {
       scheduledAt: new Date(),
       recurrance: null,
       completedAt: null,
-      isNew: false,
+      isNew: true,
       scheduleHistory: [{
         bucket: bucket,
         scheduledAt: new Date(),
@@ -26,6 +26,17 @@ export default class Task {
       }],
       goals: []
     }
+  }
+
+  new() {
+    var task = new Task(this.bucket)
+    task.text = this.text
+    task.time = this.time
+    task.importance = this.importance
+    task.duration = this.duration
+    task.isNew = false
+    task.goals = this.goals.slice(0)
+    return task
   }
 
   scheduledFor(date) {
