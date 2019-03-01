@@ -155,6 +155,9 @@ export default class Container extends React.Component {
         }
       }
 
+      const nowTask = this.props.store.getNowTask()
+
+
       return (
         <KeyboardAvoidingView behavior="padding" enabled>
         <View style={{width: '100%', height: '100%'}}>
@@ -223,21 +226,18 @@ export default class Container extends React.Component {
                 <Collapsible onOpen={()=>{this.todayTasksList.scrollTo(0, false)}} onDefault={()=>{this.todayTasksList.scrollTo(0, false)}} alwaysOnIndices={[1]} flexible={true} ref={(ref)=>{this.todayCollapsible = ref}} style={{backgroundColor: themes[this.props.theme].todayColor, borderTopColor: themes[this.props.theme].todayAccent, borderTopWidth: 5, borderBottomWidth: 5, borderBottomColor:themes[this.props.theme].todayAccent}}>
                   <View style={{flex:1, justifyContent: 'center'}}>
                     {this.isSceneIn([HOME])?
-                      this.props.store.getTodayTasksCount()>0&&this.props.store.getNowTask()!=null?(
+                      this.props.store.getTodayTasksCount()>0&&nowTask!=null?(
                       <NowTask
                         scrollable={true}
-                        task={this.props.store.getNowTask()}
+                        key={nowTask.id}
+                        task={nowTask}
                         rightAction={this.props.store.scheduleTaskForTomorrow}
                         leftAction={this.props.store.completeTask}
                         selectGoal={this.selectGoal}
                         theme={this.props.theme}
                         store={this.props.store}
                         fontLoaded={this.props.fontLoaded} />
-                    ):(
-                      <View>
-
-                      </View>
-                    ):null}
+                    ):null:null}
                     <TasksList
                       ref={(ref)=>{this.todayTasksList=ref}}
                       endOffset={90}
