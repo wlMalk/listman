@@ -4,6 +4,7 @@ import { UIManager, Platform, StyleSheet, Text, View } from 'react-native';
 
 import Container from './Container'
 import { Store } from './datastore/Store';
+import { initThemes } from './Themes';
 
 export default class App extends React.Component {
   constructor(props){
@@ -18,6 +19,8 @@ export default class App extends React.Component {
 
     var store = new Store(today, tomorrow, (store)=>{this.setState({store:store})})
     store.load()
+
+    initThemes(store.settings.tasksPerDay)
 
     store.onCreateTodayTask = () => {this.container.setViewingToday();this.container.todayTasksList.scrollTo(0, true)}
     store.onCreateTomorrowTask = () => {this.container.setViewingTomorrow();this.container.tomorrowTasksList.scrollTo(0, true)}
