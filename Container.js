@@ -53,11 +53,6 @@ export default class Container extends React.Component {
         this.setScene(TOMORROW, null)
       }
     }
-    setViewingLater() {
-      if(this.state.scene!=LATER){
-        this.setScene(LATER, null)
-      }
-    }
     setScene(scene,payload){
       if(this.state.editingTaskText){
         Keyboard.dismiss()
@@ -229,7 +224,7 @@ export default class Container extends React.Component {
                       this.props.store.getTodayTasksCount()>0&&nowTask!=null?(
                       <NowTask
                         scrollable={true}
-                        key={nowTask.id}
+                        key={"now"+nowTask.id}
                         task={nowTask}
                         rightAction={this.props.store.scheduleTaskForTomorrow}
                         leftAction={this.props.store.completeTask}
@@ -242,6 +237,7 @@ export default class Container extends React.Component {
                       ref={(ref)=>{this.todayTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTodayTasks()}
+                      topOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
                       renderItem={({item, index}) => (
                         <TodayTask
                           scrollable={true}
@@ -273,6 +269,7 @@ export default class Container extends React.Component {
                       ref={(ref)=>{this.tomorrowTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTomorrowTasks()}
+                      topOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
                       renderItem={({item, index}) => (
                         <TomorrowTask
                           scrollable={true}
