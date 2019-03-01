@@ -133,22 +133,6 @@ export class Store {
     this.remainingTasksCache = null
     this.setter(this)
   }
-  redoCompletedTaskToday(task){
-    if(this.canAddTaskForToday()){
-      var now = new Date()
-      t.completed = true
-      t.completedAt = now
-      this.today.splice(this.today.findIndex((t)=>t.id==task.id),1);
-      this.completed.unshift(task)
-      this.counts.today = this.counts.today - 1
-      this.counts.remaining = this.counts.remaining - 1
-      this.totals.completed = this.totals.completed + 1
-      this.setter(this)
-    }
-  }
-  redoCompletedTaskTomorrow(task){
-
-  }
   scheduleTaskForBucket(task, toBucket, scheduleType, scheduleReason){
     var bucket = task.bucket
     this.tasks[bucket].splice(this.tasks[bucket].findIndex((t)=>t.id==task.id),1);
@@ -162,6 +146,18 @@ export class Store {
     this.totals[toBucket] = this.totals[toBucket] + 1
     this.totals[bucket] = this.totals[bucket] - 1
     task.bucket = toBucket
+  }
+  redoCompletedTaskToday(task){
+    var t = task.new()
+    t.parentCompletedTask = task.id
+    this.addTaskToBucket(BUCKETS.TODAY, t)
+    this.setter(this)
+  }
+  redoCompletedTaskTomorrow(task){
+    var t = task.new()
+    t.parentCompletedTask = task.id
+    this.addTaskToBucket(BUCKETS.TOMORROW, t)
+    this.setter(this)
   }
   scheduleTaskForToday(task){
     this.scheduleTaskForBucket(task, BUCKETS.TODAY)
@@ -250,7 +246,7 @@ export class Store {
     return this.tasks[BUCKETS.TOMORROW]
   }
   getNowTask(){
-    if(!this.tasks[BUCKETS.TODAY][0].isNew){
+    if(this.tasks[BUCKETS.TODAY].length>0&&!this.tasks[BUCKETS.TODAY][0].isNew){
       return this.tasks[BUCKETS.TODAY][0]
     }
     return null
@@ -303,7 +299,24 @@ export class Store {
   }
 
   sort(){
-
+    this.sortTodayTasks()
+    this.sortTomorrowTasks()
+    this.sortLaterTasks()
+    this.sortCompletedTasks()
+    this.sortRecurringTasks()
+  }
+  sortBucketTasks(bucket){
+    if(bucket==BUCKETS.TODAY){
+      this.sortTodayTasks()
+    }else if(bucket==BUCKETS.TOMORROW){
+      this.sortTomorrowTasks()
+    }else if(bucket==BUCKETS.LATER){
+      this.sortLaterTasks()
+    }else if(bucket==BUCKETS.COMPLETED){
+      this.sortCompletedTasks()
+    }else if(bucket==BUCKETS.RECURRING){
+      this.sortRecurringTasks()
+    }
   }
   sortTodayTasks(){
 
@@ -312,6 +325,12 @@ export class Store {
 
   }
   sortLaterTasks(){
+
+  }
+  sortCompletedTasks(){
+
+  }
+  sortRecurringTasks(){
 
   }
 
