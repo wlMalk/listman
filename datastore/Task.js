@@ -4,12 +4,12 @@ export default class Task {
   constructor(bucket) {
     return {
       id: uuid(),
-      text: "",
+      text: "df",
       parentRecurringTask: null,
       parentCompletedTask: null,
       bucket: bucket,
       dayScheduledFor: null,
-      importance: null,
+      importance: 2,
       time: null,
       duration: null,
       scheduledAt: new Date(),
