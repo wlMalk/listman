@@ -270,9 +270,6 @@ export class Store {
   getTodayTasksCount(){
     return this.counts[BUCKETS.TODAY]
   }
-  getTomorrowTasksCount(){
-    return this.counts[BUCKETS.TOMORROW]
-  }
 
   getAllTasksTotal(){
     return this.totals[BUCKETS.COMPLETED]+this.counts[BUCKETS.TODAY]+this.totals[BUCKETS.TOMORROW]+this.totals[BUCKETS.LATER]
@@ -334,6 +331,16 @@ export class Store {
   }
   sortRecurringTasks(){
 
+  }
+
+  static completedTasksSorter(a, b){
+    if(a.completedAt<b.completedAt){
+      return -1
+    }else if(a.completedAt>b.completedAt){
+      return 1
+    }else{
+      return 0
+    }
   }
 
   save(){
