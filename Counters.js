@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
     justifyContent: 'center',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     opacity: .8,
   },
   counterName: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   counterCount: {
     fontFamily: 'pt-mono-bold',
-    fontSize: 16,
+    fontSize: 14,
     textAlign: "center",
   },
   separator: {
