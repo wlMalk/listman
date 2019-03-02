@@ -237,11 +237,11 @@ export default class Container extends React.Component {
                       ref={(ref)=>{this.todayTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTodayTasks()}
-                      topOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
+                      startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
                       renderItem={({item, index}) => (
                         <TodayTask
                           scrollable={true}
-                          last={index==this.props.store.getTodayTasksCount()}
+                          last={index==this.props.store.getTodayTasksCount()-1}
                           key={item.id}
                           task={item}
                           index={index}
@@ -269,11 +269,11 @@ export default class Container extends React.Component {
                       ref={(ref)=>{this.tomorrowTasksList=ref}}
                       endOffset={90}
                       tasks={this.props.store.getTomorrowTasks()}
-                      topOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
+                      startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
                       renderItem={({item, index}) => (
                         <TomorrowTask
                           scrollable={true}
-                          last={index==this.props.store.getTomorrowTasksCount()}
+                          last={index==this.props.store.getTomorrowTasksTotal()-1}
                           key={item.id}
                           task={item}
                           index={index}
@@ -292,7 +292,7 @@ export default class Container extends React.Component {
                       fontLoaded={this.props.fontLoaded}
                     />
                   </View>
-                  <Bar theme={this.props.theme} closed={this.state.scene!=TOMORROW} forTomorrow={true} date={this.props.store.getTomorrowDate()} count={this.props.store.getTomorrowTasksCount()} total={this.props.store.getTomorrowTasksTotal()} onPress={()=>{this.setScene(TOMORROW,null)}} creator={this.props.store.createTomorrowTask} fontLoaded={this.props.fontLoaded} ref={ref => this.tomorrowBar = ref} />
+                  <Bar theme={this.props.theme} closed={this.state.scene!=TOMORROW} forTomorrow={true} date={this.props.store.getTomorrowDate()} count={this.props.store.getTomorrowTasksTotal()} total={this.props.store.settings.tasksPerDay} onPress={()=>{this.setScene(TOMORROW,null)}} creator={this.props.store.createTomorrowTask} fontLoaded={this.props.fontLoaded} ref={ref => this.tomorrowBar = ref} />
                   <ShadowOverlay color={themes[this.props.theme].tomorrowColor} size={100} start={.6} end={.05} last={true} initiallyShown={true} />
                 </Collapsible>
               </View>
