@@ -12,7 +12,7 @@ export class List extends React.Component {
       scrollAnimation: new Animated.Value(0),
       reachedStart: true,
       reachedEnd: false,
-      topOverScrollHeight: 0,
+      startOverScrollHeight: 0,
     }
 
     this.contentSize = 0
@@ -21,6 +21,7 @@ export class List extends React.Component {
     this.flatListRef = null
 
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleScrollEnd = this.handleScrollEnd.bind(this)
   }
   scrollToIndex(i) {
     if(i==this.props.data.length-1){
@@ -39,13 +40,18 @@ export class List extends React.Component {
       this.flatListRef.getNode().scrollToEnd(v)
     }
   }
+  handleScrollEnd(){
+    this.setState({startOverScrollHeight: 0})
+  }
   handleScroll(e) {
     const startOffset = 0
     const endOffset = this.props.endOffset?this.contentSize-this.size+(this.props.startOffset?this.props.startOffset:0)+this.props.endOffset:this.contentSize-this.size
 
     const contentOffset = !this.props.horizontal?e.nativeEvent.contentOffset.y:e.nativeEvent.contentOffset.x
-    if(contentOffset<startOffset&&this.props.topOverScrollColor){
-      this.setState({topOverScrollHeight: 20+Math.abs(contentOffset)})
+    if(contentOffset<startOffset&&this.props.startOverScrollColor){
+      this.setState({startOverScrollHeight: this.contentSize+Math.abs(contentOffset)-((this.props.startOffset?this.props.startOffset:0)+(this.props.endOffset?this.props.endOffset:0))})
+    }else if(this.props.startOverScrollColor&&this.state.startOverScrollHeight>0){
+      this.setState({startOverScrollHeight: 0})
     }
     if(contentOffset<=startOffset&&!this.state.reachedStart&&!this.props.noStartOverlay){
       this.setState({reachedStart: true})
@@ -78,8 +84,8 @@ export class List extends React.Component {
         onLayout={(e)=>{
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
-        {this.props.topOverScrollColor?(
-          <View style={[styles.topOverScroll, {backgroundColor: this.props.topOverScrollColor, height: this.state.topOverScrollHeight}]}></View>
+        {this.props.startOverScrollColor?(
+          <View style={[styles.startOverScroll, {backgroundColor: this.props.startOverScrollColor, height: this.state.startOverScrollHeight}]}></View>
         ):null}
         {this.props.data.length>0?(
         <AnimatedFlatList
@@ -93,13 +99,14 @@ export class List extends React.Component {
         [{
             nativeEvent: {
                 contentOffset: {
-                    y: null
+                    y: this.state.scrollAnimation
                 }
             }
         }],{
           useNativeDriver: true,
           listener: this.handleScroll,
         })}
+          onMomentumScrollEnd={this.handleScrollEnd}
           scrollEventThrottle={1}
           ref={(ref) => {this.flatListRef = ref}}
           {...props}/>
@@ -127,7 +134,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
-  topOverScroll: {
+  startOverScroll: {
     position: 'absolute',
     top: 0,
     width: '100%',
