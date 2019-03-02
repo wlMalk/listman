@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
   },
   goal: {
     flex: 1,
-    borderRadius: 5,
+    borderRadius: 4,
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 6,
