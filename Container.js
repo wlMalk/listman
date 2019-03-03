@@ -235,6 +235,7 @@ export default class Container extends React.Component {
                     ):null:null}
                     <TasksList
                       ref={(ref)=>{this.todayTasksList=ref}}
+                      startOffset={25}
                       endOffset={90}
                       tasks={this.props.store.getTodayTasks()}
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
@@ -252,7 +253,6 @@ export default class Container extends React.Component {
                           store={this.props.store}
                           fontLoaded={this.props.fontLoaded} />
                       )}
-                      noStartOverlay={true}
                       noEndOverlay={true}
                       overlayColor={themes[this.props.theme].todayColor}
                       emptyState={"No tasks for today"}
@@ -267,6 +267,7 @@ export default class Container extends React.Component {
                   <View style={{flex:1}}>
                     <TasksList
                       ref={(ref)=>{this.tomorrowTasksList=ref}}
+                      startOffset={25}
                       endOffset={90}
                       tasks={this.props.store.getTomorrowTasks()}
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
@@ -284,7 +285,6 @@ export default class Container extends React.Component {
                           store={this.props.store}
                           fontLoaded={this.props.fontLoaded} />
                       )}
-                      noStartOverlay={true}
                       noEndOverlay={true}
                       overlayColor={themes[this.props.theme].tomorrowColor}
                       emptyState={"No tasks for tomorrow"}
