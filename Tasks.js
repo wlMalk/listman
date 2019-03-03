@@ -160,7 +160,7 @@ export class Task extends React.Component {
     var leftEnabled = this.props.leftEnabled
 
     return (
-      <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: 2}:null]}>
+      <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: 10}:null]}>
         <ScrollView
         onContentSizeChange={()=>{this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}
         style={{zIndex: 2, overflow: this.props.shadow?'visible':'hidden'}}
@@ -335,6 +335,7 @@ export class TodayTask extends Task {
   render() {
     return (
       <Task
+        shadow={true}
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
@@ -347,7 +348,7 @@ export class TodayTask extends Task {
         borderColor={themes[this.props.theme].todayTasksBorder[this.props.index]}
         highlightColor={themes[this.props.theme].todayTasksHighlight[this.props.index]}
         textColor={themes[this.props.theme].todayTasksText[this.props.index]}
-        textFontSize={18}
+        textFontSize={24}
         rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
         leftText={this.props.leftText?this.props.leftText:"Completed"}
         rightColor={themes[this.props.theme].todayColor}
@@ -381,6 +382,7 @@ export class TomorrowTask extends Task {
   render() {
     return (
       <Task
+        shadow={true}
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
@@ -393,7 +395,7 @@ export class TomorrowTask extends Task {
         borderColor={themes[this.props.theme].tomorrowTasksBorder[this.props.index]}
         highlightColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
         textColor={themes[this.props.theme].tomorrowTasksText[this.props.index]}
-        textFontSize={18}
+        textFontSize={24}
         rightText={this.props.rightText?this.props.rightText:"Later"}
         leftText={this.props.leftText?this.props.leftText:"Today"}
         rightColor={themes[this.props.theme].tomorrowColor}
@@ -444,14 +446,14 @@ export class NowTask extends Task {
             borderColor={themes[this.props.theme].todayTasksBorder[0]}
             highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
             textColor={themes[this.props.theme].todayTasksText[0]}
-            textFontSize={18}
+            textFontSize={24}
             rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
             leftText={this.props.leftText?this.props.leftText:"Completed"}
-            rightColor={themes[this.props.theme].tomorrowColor}
-            leftColor={themes[this.props.theme].todaySecondary}
-            rightBorderColor={themes[this.props.theme].tomorrowAccent}
-            leftBorderColor={themes[this.props.theme].todayAccent}
-            rightTextColor={themes[this.props.theme].tomorrowAccent}
+            rightColor={themes[this.props.theme].todayColor}
+            leftColor={themes[this.props.theme].todayColor}
+            rightBorderColor={themes[this.props.theme].todayColor}
+            leftBorderColor={themes[this.props.theme].todayColor}
+            rightTextColor={themes[this.props.theme].todaySecondary}
             leftTextColor={themes[this.props.theme].todayAccent}
             footerItemColor={themes[this.props.theme].todayTasksTextSecondary[0]}
             footerItemSize={10}
@@ -489,11 +491,11 @@ export class TodoTask extends Task {
         task={this.props.task}
         showDayIndicators={true}
         verticalSpace={5}
-        color={themes[this.props.theme].mainTasksColor}
+        color={themes[this.props.theme].mainColor}
         highlightColor={themes[this.props.theme].mainTasksHighlightColor}
         textColor={themes[this.props.theme].mainTasksTextColor}
         borderColor={themes[this.props.theme].mainTasksBorderColor}
-        textFontSize={18}
+        textFontSize={24}
         rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
         leftText={this.props.leftText?this.props.leftText:"Today"}
         rightColor={themes[this.props.theme].mainColor}
@@ -532,8 +534,7 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    borderRadius: 5,
-    borderWidth: 2,
+    borderBottomWidth: 10,
     borderColor: "transparent",
   },
   taskFullWidth: {
