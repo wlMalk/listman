@@ -10,6 +10,7 @@ export class List extends React.Component {
     super(props)
     this.state = {
       scrollAnimation: new Animated.Value(0),
+      scrolling: false,
       reachedStart: true,
       reachedEnd: false,
     }
@@ -20,6 +21,8 @@ export class List extends React.Component {
     this.flatListRef = null
 
     this.handleScroll = this.handleScroll.bind(this)
+    this.handleScrollBegin = this.handleScrollBegin.bind(this)
+    this.handleScrollEnd = this.handleScrollEnd.bind(this)
   }
   scrollToIndex(i) {
     if(i==this.props.data.length-1){
@@ -64,6 +67,12 @@ export class List extends React.Component {
       this.props.onScroll(e)
     }
   }
+  handleScrollBegin(){
+    this.setState({scrolling: true})
+  }
+  handleScrollEnd(){
+    this.setState({scrolling: false})
+  }
   render() {
     var {style, onScroll, ...props} = this.props;
     return (
@@ -74,10 +83,12 @@ export class List extends React.Component {
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
         {this.props.startOverScrollColor?(
-          <View style={[styles.startOverScroll, {backgroundColor: this.props.startOverScrollColor, height: this.props.data.length>0?'50%':0}]}></View>
+          <View style={[styles.startOverScroll, {backgroundColor: this.props.startOverScrollColor, height: this.props.data.length&&this.state.scrolling>0?'50%':0}]}></View>
         ):null}
         {this.props.data.length>0?(
         <AnimatedFlatList
+          onScrollBeginDrag={this.handleScrollBegin}
+          onMomentumScrollEnd={this.handleScrollEnd}
           style={{backgroundColor:'transparent',overflow: this.props.overflowVisible?'visible':'hidden'}}
           contentContainerStyle={[!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}, {overflow: this.props.overflowVisible?'visible':'hidden'}, this.props.startOverScrollColor?{backgroundColor:this.props.backgroundColor, minHeight: '100%'}:null]}
           nestedScrollEnabled={true}
