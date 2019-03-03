@@ -168,7 +168,7 @@ export class GoalsList extends React.Component {
           showsHorizontalScrollIndicator={false}
           onScroll={this.handleScroll}
           onMomentumScrollEnd={this.handleScrollEnd}
-          scrollEventThrottle={1}>
+          scrollEventThrottle={16}>
           <View onLayout={(e)=>{this.setState({titleWidth: e.nativeEvent.layout.width})}} style={{flexDirection: 'row', zIndex: 1}}>
             <View style={{justifyContent: 'center', alignItems: 'center', paddingLeft: 18, marginRight: 12}}>
               {this.props.fontLoaded ? (
