@@ -172,7 +172,7 @@ export class Task extends React.Component {
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        scrollEventThrottle={ 1 }
+        scrollEventThrottle={16}
         onScroll={this.handleScroll}
         ref={(ref)=>{this.scrollView=ref}}>
           {this.props.leftEnabled?(
@@ -303,6 +303,7 @@ export class TasksList extends React.Component {
       <List
         ref={(ref) => {this.list = ref}}
         style={{flex: 1}}
+        backgroundColor={this.props.backgroundColor}
         startOverScrollColor={this.props.startOverScrollColor}
         scrollEnabled={this.props.scrollEnabled}
         data={this.props.tasks}
