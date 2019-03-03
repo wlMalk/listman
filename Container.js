@@ -235,6 +235,7 @@ export default class Container extends React.Component {
                     ):null:null}
                     <TasksList
                       ref={(ref)=>{this.todayTasksList=ref}}
+                      backgroundColor={themes[this.props.theme].todayColor}
                       startOffset={25}
                       endOffset={90}
                       tasks={this.props.store.getTodayTasks()}
@@ -267,6 +268,7 @@ export default class Container extends React.Component {
                   <View style={{flex:1}}>
                     <TasksList
                       ref={(ref)=>{this.tomorrowTasksList=ref}}
+                      backgroundColor={themes[this.props.theme].tomorrowColor}
                       startOffset={25}
                       endOffset={90}
                       tasks={this.props.store.getTomorrowTasks()}
