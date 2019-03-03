@@ -12,7 +12,6 @@ export class List extends React.Component {
       scrollAnimation: new Animated.Value(0),
       reachedStart: true,
       reachedEnd: false,
-      startOverScrollHeight: 0,
     }
 
     this.contentSize = 0
@@ -21,7 +20,6 @@ export class List extends React.Component {
     this.flatListRef = null
 
     this.handleScroll = this.handleScroll.bind(this)
-    this.handleScrollEnd = this.handleScrollEnd.bind(this)
   }
   scrollToIndex(i) {
     if(i==this.props.data.length-1){
@@ -40,21 +38,10 @@ export class List extends React.Component {
       this.flatListRef.getNode().scrollToEnd(v)
     }
   }
-  handleScrollEnd(){
-    if(this.props.startOverScrollColor){
-      this.setState({startOverScrollHeight: 0})
-    }
-  }
   handleScroll(e) {
     const startOffset = 0
     const endOffset = this.props.endOffset?this.contentSize-this.size+(this.props.startOffset?this.props.startOffset:0)+this.props.endOffset:this.contentSize-this.size
-
     const contentOffset = !this.props.horizontal?e.nativeEvent.contentOffset.y:e.nativeEvent.contentOffset.x
-    if(contentOffset<startOffset&&this.props.startOverScrollColor){
-      this.setState({startOverScrollHeight: Math.abs(contentOffset)})
-    }else if(this.props.startOverScrollColor&&this.state.startOverScrollHeight>0){
-      this.setState({startOverScrollHeight: 0})
-    }
     if(contentOffset<=startOffset&&!this.state.reachedStart&&!this.props.noStartOverlay){
       this.setState({reachedStart: true})
       this.startShadowOverlay.hide()
@@ -87,12 +74,12 @@ export class List extends React.Component {
           this.size = !this.props.horizontal?e.nativeEvent.layout.height:e.nativeEvent.layout.width
         }}>
         {this.props.startOverScrollColor?(
-          <View style={[styles.startOverScroll, {backgroundColor: this.props.startOverScrollColor, height: this.state.startOverScrollHeight}]}></View>
+          <View style={[styles.startOverScroll, {backgroundColor: this.props.startOverScrollColor, height: this.props.data.length>0?'50%':0}]}></View>
         ):null}
         {this.props.data.length>0?(
         <AnimatedFlatList
-          style={{overflow: this.props.overflowVisible?'visible':'hidden'}}
-          contentContainerStyle={[!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}, {overflow: this.props.overflowVisible?'visible':'hidden'}]}
+          style={{backgroundColor:'transparent',overflow: this.props.overflowVisible?'visible':'hidden'}}
+          contentContainerStyle={[!this.props.horizontal?{paddingTop: this.props.startOffset?this.props.startOffset:0, paddingBottom: this.props.endOffset?this.props.endOffset:0}:{paddingLeft: this.props.startOffset?this.props.startOffset:0, paddingRight: this.props.endOffset?this.props.endOffset:0}, {overflow: this.props.overflowVisible?'visible':'hidden'}, this.props.startOverScrollColor?{backgroundColor:this.props.backgroundColor, minHeight: '100%'}:null]}
           nestedScrollEnabled={true}
           onContentSizeChange={(contentWidth, contentHeight)=>{
             this.contentSize = !this.props.horizontal?contentHeight:contentWidth
@@ -108,8 +95,7 @@ export class List extends React.Component {
           useNativeDriver: true,
           listener: this.handleScroll,
         })}
-          onMomentumScrollEnd={this.handleScrollEnd}
-          scrollEventThrottle={1}
+          scrollEventThrottle={16}
           ref={(ref) => {this.flatListRef = ref}}
           {...props}/>
         ):(
