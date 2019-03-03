@@ -41,7 +41,9 @@ export class List extends React.Component {
     }
   }
   handleScrollEnd(){
-    this.setState({startOverScrollHeight: 0})
+    if(this.props.startOverScrollColor){
+      this.setState({startOverScrollHeight: 0})
+    }
   }
   handleScroll(e) {
     const startOffset = 0
@@ -49,7 +51,7 @@ export class List extends React.Component {
 
     const contentOffset = !this.props.horizontal?e.nativeEvent.contentOffset.y:e.nativeEvent.contentOffset.x
     if(contentOffset<startOffset&&this.props.startOverScrollColor){
-      this.setState({startOverScrollHeight: this.contentSize+Math.abs(contentOffset)-((this.props.startOffset?this.props.startOffset:0)+(this.props.endOffset?this.props.endOffset:0))})
+      this.setState({startOverScrollHeight: Math.abs(contentOffset)})
     }else if(this.props.startOverScrollColor&&this.state.startOverScrollHeight>0){
       this.setState({startOverScrollHeight: 0})
     }
