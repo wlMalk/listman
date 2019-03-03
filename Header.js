@@ -9,12 +9,15 @@ export class Header extends React.Component {
   render() {
     return (
       <View style={styles.header}>
+        <TouchableOpacity style={[styles.button, {alignItems: 'flex-start'}]} activeOpacity={.5}>
+          <FontAwesome name="navicon" size={28} color={themes[this.props.theme].mainTitles} />
+        </TouchableOpacity>
         <TouchableOpacity onPress={this.props.onLogoPress} style={styles.logoContainer} activeOpacity={.5}>
           {this.props.fontLoaded ? (
-          <Text style={[styles.logo, {color: themes[this.props.theme].mainTitles}]}>{"LISTISTIST"}</Text>
+          <Text style={[styles.logo, {color: themes[this.props.theme].mainTitles}]}>{"LISTMAN"}</Text>
           ):null}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} activeOpacity={.5}>
+        <TouchableOpacity style={[styles.button, {alignItems: 'flex-end'}]} activeOpacity={.5}>
           <FontAwesome name="gear" size={28} color={themes[this.props.theme].mainTitles} />
         </TouchableOpacity>
       </View>
@@ -34,15 +37,15 @@ const styles = StyleSheet.create({
     flex: 1,
     height: HEADER_HEIGHT,
     justifyContent: 'center',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   logo: {
     fontFamily: 'pt-mono-bold',
     fontSize: 24,
+    letterSpacing: 10,
   },
   button: {
     justifyContent: 'center',
-    alignItems: 'flex-end',
     width: 60,
     height: HEADER_HEIGHT,
   }
