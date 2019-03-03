@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Animated, Dimensions, LayoutAnimation, ScrollView, FlatList, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { TextInput, Platform, Animated, Dimensions, LayoutAnimation, ScrollView, StyleSheet, Text, View, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 
 import { List } from './List';
 
@@ -16,7 +16,7 @@ export class Task extends React.Component {
       scrollable:true,
       scrolling: false,
       text: props.task.text,
-      editingText: props.task.isNew,
+      isEditing: props.task.isNew,
       c: new Animated.Value(0),
       editingImportance: false,
       editingDuration: false,
@@ -30,7 +30,10 @@ export class Task extends React.Component {
     this.handleScrollEnd = this.handleScrollEnd.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.handleLongPress = this.handleLongPress.bind(this)
+    this.handlePress = this.handlePress.bind(this)
     this.handlePressOut = this.handlePressOut.bind(this)
+    this.handleBlur = this.handleBlur.bind(this)
+    this.handleTextChange = this.handleTextChange.bind(this)
   }
   handleScrollEnd(e) {
     var action = this.getAction(e)
@@ -45,6 +48,8 @@ export class Task extends React.Component {
           this.props.rightAction(this.props.task)
         }
       },30)
+    }else if(this.state.dragAction!=0){
+      this.setState({dragAction: 0})
     }
   }
   handleScrollBegin() {
@@ -66,6 +71,14 @@ export class Task extends React.Component {
 
     if(this.state.dragAction!=action){
       this.setState({dragAction: action})
+    }
+  }
+  handleBlur(){
+    this.setState({isEditing: false})
+  }
+  handleTextChange(text){
+    if(text.length<=limits.textLength){
+      this.setState({text:text})
     }
   }
   handleLongPress(event){
@@ -90,6 +103,10 @@ export class Task extends React.Component {
         },200)
       }
     }
+  }
+  handlePress(){
+    LayoutAnimation.configureNext(animationConfig);
+    this.setState({isEditing: true})
   }
   handlePressOut(){
     if(!this.props.task.isNew){
@@ -145,14 +162,13 @@ export class Task extends React.Component {
     return (
       <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: 2}:null]}>
         <ScrollView
-        onContentSizeChange={()=>{if(Platform.OS==="android"){this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}}
+        onContentSizeChange={()=>{this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}
         style={{zIndex: 2, overflow: this.props.shadow?'visible':'hidden'}}
         overScrollMode='never'
         scrollEnabled={!this.state.editingText&&this.state.scrollable&&this.props.scrollable}
         onScrollBeginDrag={this.handleScrollBegin}
         onMomentumScrollEnd={this.handleScrollEnd}
         pagingEnabled={true}
-        contentOffset={{x:this.props.leftEnabled?screenWidth:0}}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -162,8 +178,9 @@ export class Task extends React.Component {
           {this.props.leftEnabled?(
           <View style={styles.taskPlaceholder}></View>
           ):null}
-          <TouchableWithoutFeedback onLongPress={this.handleLongPress} onPressOut={this.handlePressOut}>
+          <TouchableWithoutFeedback onLongPress={this.handleLongPress} onPress={this.handlePress} onPressOut={this.handlePressOut}>
             <View style={[styles.taskContainer, this.props.fullWidth?styles.taskContainerFullWidth:null]}>
+              {!this.state.isEditing ? (
               <Animated.View style={[this.props.style, styles.task, this.props.shadow?styles.taskShadow:null, (this.props.fullWidth&&this.props.index>0)?{borderTopWidth: 0}:null, (this.props.fullWidth&&this.state.scrolling&&!this.props.last)?{borderBottomWidth: 0}:null, this.props.fullWidth?styles.taskFullWidth:null, {backgroundColor: color}, this.props.borderColor?{borderColor: this.props.borderColor}:null]}>
                 {this.props.showDayIndicators&&this.props.task.scheduledForToday&&this.props.task.scheduledForTomorrow?(
                 <View style={styles.taskHeader}>
@@ -178,13 +195,24 @@ export class Task extends React.Component {
                 <TaskGoals style={footerItems.length==0?{marginBottom:17}:null} color={this.props.goalColor} textColor={this.props.goalTextColor} goals={this.props.task.goals} selectGoal={this.props.selectGoal} fontLoaded={this.props.fontLoaded} />
                 ) : null}
                 <TaskFooter items={footerItems} itemColor={this.props.footerItemColor} separatorColor={this.props.footerSeparatorColor} itemSize={this.props.footerItemSize} fontLoaded={this.props.fontLoaded} />
-              </Animated.View>
+              </Animated.View>):(
+              <TaskForm
+                textFontSize={this.props.textFontSize}
+                onBlur={this.handleBlur}
+                onChangeText={this.handleTextChange}
+                color={this.props.highlightColor}
+                borderColor={this.props.borderColor}
+                text={this.state.text}
+                textColor={this.props.textColor}
+                selectionColor={this.props.footerItemColor} />
+              )}
             </View>
           </TouchableWithoutFeedback>
           {this.props.rightEnabled?(
           <View style={styles.taskPlaceholder}></View>
           ) : null}
         </ScrollView>
+        {!this.state.isEditing ? (
         <View style={[styles.taskUnderLayer, this.props.fullWidth?styles.taskUnderLayerFullWidth:null, {backgroundColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftColor:"transparent"}, {borderColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightBorderColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftBorderColor:"transparent"}, this.props.fullWidth&&this.props.last?{borderBottomWidth: 2}:null]}>
           {this.props.fontLoaded ? (
           <Text style={[styles.actionText, {color: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightTextColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftTextColor:"transparent"}, {textAlign: this.state.dragAction==1&&this.props.rightEnabled?"right":this.state.dragAction==-1&&this.props.leftEnabled?"left":"center"}]}>
@@ -192,9 +220,34 @@ export class Task extends React.Component {
           </Text>
           ) : null}
         </View>
+        ) : null}
         {this.props.fullWidth&&this.state.scrolling&&!this.props.last&&this.props.borderColor?(
           <View style={{height:2, width: screenWidth, backgroundColor: this.props.borderColor}}></View>
         ):null}
+      </View>
+    )
+  }
+}
+
+class TaskForm extends React.Component {
+  render() {
+    return (
+      <View style={[styles.taskForm, this.props.style, this.props.shadow?styles.taskShadow:null, (this.props.fullWidth&&this.props.index>0)?{borderTopWidth: 0}:null, (this.props.fullWidth&&this.state.scrolling&&!this.props.last)?{borderBottomWidth: 0}:null, this.props.fullWidth?styles.taskFullWidth:null, {backgroundColor: this.props.color}, this.props.borderColor?{borderColor: this.props.borderColor}:null]}>
+        <TextInput
+          onBlur={this.props.onBlur}
+          onChangeText={this.props.onChangeText}
+          maxLength={limits.textLength}
+          autoCapitalize={'characters'}
+          enablesReturnKeyAutomatically={true}
+          spellCheck={false}
+          autoFocus={true}
+          autoCorrect={false}
+          selectTextOnFocus={true}
+          returnKeyType="done"
+          selectionColor={this.props.selectionColor}
+          multiline={true}
+          style={[styles.textInput, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, {color: this.props.textColor}, {paddingTop: 14, paddingLeft: 16, paddingRight: 16, paddingBottom: 27}]}
+          value={this.props.text.toUpperCase()} />
       </View>
     )
   }
@@ -285,7 +338,6 @@ export class TodayTask extends Task {
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
-        fullWidth={true}
         leftEnabled={this.leftEnabled()}
         rightEnabled={this.rightEnabled()}
         task={this.props.task}
@@ -332,7 +384,6 @@ export class TomorrowTask extends Task {
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
-        fullWidth={true}
         leftEnabled={this.leftEnabled()}
         rightEnabled={this.rightEnabled()}
         task={this.props.task}
@@ -572,6 +623,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 3,
     marginLeft: 3,
+  },
+  taskForm: {
+    borderWidth: 2,
+  },
+  textInput: {
+    fontFamily: 'pt-mono-bold',
+    fontSize: 20,
+    textAlign: 'left',
   },
   taskShadow: {
     shadowColor: "#000",
