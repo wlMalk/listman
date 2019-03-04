@@ -24,11 +24,14 @@ export class List extends React.Component {
     this.handleScrollBegin = this.handleScrollBegin.bind(this)
     this.handleScrollEnd = this.handleScrollEnd.bind(this)
   }
-  scrollToIndex(i) {
+  scrollToIndex(i, pos) {
+    if(typeof pos === 'undefined'||pos==null){
+      pos = .5
+    }
     if(i==this.props.data.length-1){
       this.flatListRef.getNode().scrollToEnd({animated: true})
     }else{
-      this.flatListRef.getNode().scrollToIndex({index: i, viewPosition: .5, animated: true})
+      this.flatListRef.getNode().scrollToIndex({index: i, viewPosition: pos, animated: true})
     }
   }
   scrollTo(v) {
