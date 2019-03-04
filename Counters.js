@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingLeft: 18,
     height: COUNTERS_HEIGHT,
+    zIndex: 10000,
   },
   countersList: {
     flexDirection: "row",
