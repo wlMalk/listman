@@ -170,12 +170,13 @@ export default class Container extends React.Component {
                     }.bind(this))
                 }}>
                 <GoalsList
+                  count={this.props.store.getGoalsCount()}
                   goals={this.props.store.getGoals()}
                   selectGoal={this.selectGoal}
                   selected={this.state.selectedGoal}
                   theme={this.props.theme}
                   fontLoaded={this.props.fontLoaded} />
-                <Collapsible onOpen={()=>{this.laterTasksList.scrollTo(0, true)}} onDefault={()=>{this.laterTasksList.scrollTo(0, true)}} alwaysOnIndices={[2]} ref={(ref)=>{this.tasksCollapsible = ref}} heights={[COUNTERS_HEIGHT+5,this.state.mainViewHeight/2-GOALS_HEIGHT-HEADER_HEIGHT/2,this.state.mainViewHeight-65*2-5-GOALS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].mainColor}}>
+                <Collapsible onOpen={()=>{this.laterTasksList.scrollTo(0, true)}} onDefault={()=>{this.laterTasksList.scrollTo(0, true)}} alwaysOnIndices={[2]} opacityIndices={[{index: 0, when: 0, opacity: mainTasksTotal>0?.45:1}]} ref={(ref)=>{this.tasksCollapsible = ref}} heights={[COUNTERS_HEIGHT+5,this.state.mainViewHeight/2-GOALS_HEIGHT-HEADER_HEIGHT/2,this.state.mainViewHeight-65*2-5-GOALS_HEIGHT]} style={{backgroundColor: themes[this.props.theme].mainColor}}>
                   <View style={{flex: 1}}>
                     <TasksList
                       ref={(ref)=>{this.laterTasksList=ref}}
@@ -185,6 +186,7 @@ export default class Container extends React.Component {
                       tasks={mainTasks}
                       renderItem={({item, index}) => (
                         <TodoTask
+                          editable={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                           scrollable={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                           last={index==mainTasksTotal}
                           key={item.id}
@@ -203,7 +205,7 @@ export default class Container extends React.Component {
                     />
                   </View>
                   {this.isSceneIn([HOME])?(
-                  <ShadowOverlay color={themes[this.props.theme].mainColor} size={80} start={1} end={0} last={true} initiallyShown={true} />
+                  <ShadowOverlay color={themes[this.props.theme].mainColor} size={100} start={1} end={0} last={true} initiallyShown={true} />
                   ):null}
                   <CountersList
                     onAllPress={()=>{this.setScene(ALL,null)}}
@@ -223,8 +225,7 @@ export default class Container extends React.Component {
                     {this.isSceneIn([HOME])?
                       this.props.store.getTodayTasksCount()>0&&nowTask!=null?(
                       <NowTask
-                        scrollable={true}
-                        key={"now"+nowTask.id}
+                        editable={true}
                         task={nowTask}
                         rightAction={this.props.store.scheduleTaskForTomorrow}
                         leftAction={this.props.store.completeTask}
@@ -242,6 +243,7 @@ export default class Container extends React.Component {
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
                       renderItem={({item, index}) => (
                         <TodayTask
+                          editable={true}
                           scrollable={true}
                           last={index==this.props.store.getTodayTasksCount()-1}
                           key={item.id}
@@ -275,6 +277,7 @@ export default class Container extends React.Component {
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
                       renderItem={({item, index}) => (
                         <TomorrowTask
+                          editable={true}
                           scrollable={true}
                           last={index==this.props.store.getTomorrowTasksTotal()-1}
                           key={item.id}
