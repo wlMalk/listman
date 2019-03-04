@@ -74,15 +74,19 @@ export class Task extends React.Component {
     }
   }
   handleBlur(){
-    this.setState({isEditing: false})
+    if(this.props.editable&&this.state.isEditing){
+      this.setState({isEditing: false})
+    }
   }
   handleTextChange(text){
-    if(text.length<=limits.textLength){
-      this.setState({text:text})
+    if(this.props.editable){
+      if(text.length<=limits.textLength){
+        this.setState({text:text})
+      }
     }
   }
   handleLongPress(event){
-    if(!this.props.task.isNew){
+    if(!this.props.task.isNew&&this.props.editable&&!this.state.isEditing){
       const width = screenWidth - 18*2;
       var x = event.nativeEvent.pageX - 18;
       LayoutAnimation.configureNext(animationConfig);
@@ -105,11 +109,13 @@ export class Task extends React.Component {
     }
   }
   handlePress(){
-    LayoutAnimation.configureNext(animationConfig);
-    this.setState({isEditing: true})
+    if(this.props.editable&&!this.state.isEditing){
+      LayoutAnimation.configureNext(animationConfig);
+      this.setState({isEditing: true})
+    }
   }
   handlePressOut(){
-    if(!this.props.task.isNew){
+    if(!this.props.task.isNew&&this.props.editable&&!this.state.isEditing){
       if(this.state.editingImportance||this.state.editingDuration){
         LayoutAnimation.configureNext(animationConfig);
         if(this.state.editingImportance){
@@ -160,7 +166,7 @@ export class Task extends React.Component {
     var leftEnabled = this.props.leftEnabled
 
     return (
-      <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: 10}:null]}>
+      <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: this.props.marginBottom?this.props.marginBottom:15}:null]}>
         <ScrollView
         onContentSizeChange={()=>{this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}
         style={{zIndex: 2, overflow: this.props.shadow?'visible':'hidden'}}
@@ -336,6 +342,7 @@ export class TodayTask extends Task {
   render() {
     return (
       <Task
+        editable={this.props.editable}
         shadow={true}
         scrollable={this.props.scrollable}
         index={this.props.index}
@@ -383,6 +390,7 @@ export class TomorrowTask extends Task {
   render() {
     return (
       <Task
+        editable={this.props.editable}
         shadow={true}
         scrollable={this.props.scrollable}
         index={this.props.index}
@@ -433,34 +441,22 @@ export class NowTask extends Task {
     return (
       <View style={{height: '100%'}}>
         <View style={{flex:1, justifyContent: 'center'}}>
-          <Task
-            shadow={true}
-            scrollable={this.props.scrollable}
-            index={0}
-            last={false}
-            leftEnabled={this.leftEnabled()}
-            rightEnabled={this.rightEnabled()}
+          {this.props.fontLoaded ? (
+          <Text style={{
+            fontFamily: 'pt-mono-bold',
+            fontSize: 14,
+            color: themes[this.props.theme].todaySecondary,
+            marginBottom: 4,
+            marginLeft: 18,
+          }}>{"NOW"}</Text>
+          ) : null}
+          <TodayTask
+            editable={this.props.editable}
+            scrollable={true}
+            last={true}
+            key={"now"+this.props.task.id}
             task={this.props.task}
-            showDayIndicators={false}
-            verticalSpace={5}
-            color={themes[this.props.theme].todayTasks[0]}
-            borderColor={themes[this.props.theme].todayTasksBorder[0]}
-            highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
-            textColor={themes[this.props.theme].todayTasksText[0]}
-            textFontSize={24}
-            rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
-            leftText={this.props.leftText?this.props.leftText:"Completed"}
-            rightColor={themes[this.props.theme].todayColor}
-            leftColor={themes[this.props.theme].todayColor}
-            rightBorderColor={themes[this.props.theme].todayColor}
-            leftBorderColor={themes[this.props.theme].todayColor}
-            rightTextColor={themes[this.props.theme].todaySecondary}
-            leftTextColor={themes[this.props.theme].todayAccent}
-            footerItemColor={themes[this.props.theme].todayTasksTextSecondary[0]}
-            footerItemSize={10}
-            footerSeparatorColor={themes[this.props.theme].todayTasksText[0]}
-            goalColor={themes[this.props.theme].todayTasksTextSecondary[0]}
-            goalTextColor={"#fff"}
+            index={0}
             rightAction={this.props.rightAction}
             leftAction={this.props.leftAction}
             selectGoal={this.props.selectGoal}
@@ -484,6 +480,8 @@ export class TodoTask extends Task {
   render() {
     return (
       <Task
+        marginBottom={5}
+        editable={this.props.editable}
         scrollable={this.props.scrollable}
         index={this.props.index}
         last={this.props.last}
@@ -496,7 +494,7 @@ export class TodoTask extends Task {
         highlightColor={themes[this.props.theme].mainTasksHighlightColor}
         textColor={themes[this.props.theme].mainTasksTextColor}
         borderColor={themes[this.props.theme].mainTasksBorderColor}
-        textFontSize={24}
+        textFontSize={16}
         rightText={this.props.rightText?this.props.rightText:"Tomorrow"}
         leftText={this.props.leftText?this.props.leftText:"Today"}
         rightColor={themes[this.props.theme].mainColor}
