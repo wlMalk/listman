@@ -132,6 +132,11 @@ export class GoalsList extends React.Component {
 
     // }
   }
+  scrollTo(v){
+    this.list.scrollTo(v)
+    this.setState({titleShown: true, overlayNotShown: true})
+    this.scrollView.scrollTo({x: 0, animated: true})
+  }
   handleListMomentumScrollBegin() {
     this.setState({momentum: true})
   }
