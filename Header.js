@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   logo: {
     fontFamily: 'pt-mono-bold',
     fontSize: 24,
-    letterSpacing: 10,
+    letterSpacing: 7,
+    textAlign: 'center',
   },
   button: {
     justifyContent: 'center',
