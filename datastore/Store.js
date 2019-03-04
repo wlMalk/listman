@@ -58,7 +58,6 @@ export class Store {
 
     this.counts = {}
     this.counts[BUCKETS.TODAY] = 0
-    this.counts[BUCKETS.TOMORROW] = 0
 
     this.settings = {
       theme: 0,
@@ -270,6 +269,9 @@ export class Store {
   getTodayTasksCount(){
     return this.counts[BUCKETS.TODAY]
   }
+  getGoalsCount(){
+    return this.goals.count
+  }
 
   getAllTasksTotal(){
     return this.totals[BUCKETS.COMPLETED]+this.counts[BUCKETS.TODAY]+this.totals[BUCKETS.TOMORROW]+this.totals[BUCKETS.LATER]
@@ -351,6 +353,7 @@ export class Store {
   }
 
   load(){
+    this.goals.count = 3
     this.goals.goals = [{
       id: "055e7529-da9b-458d-9591-c0a3adac2cf7",
       name: "Get a job",
