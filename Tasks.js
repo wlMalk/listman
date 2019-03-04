@@ -75,6 +75,8 @@ export class Task extends React.Component {
   }
   handleBlur(){
     if(this.props.editable&&this.state.isEditing){
+      this.props.store.setTaskText(this.props.task, this.state.text)
+      LayoutAnimation.configureNext(animationConfig);
       this.setState({isEditing: false})
     }
   }
@@ -111,7 +113,10 @@ export class Task extends React.Component {
   handlePress(){
     if(this.props.editable&&!this.state.isEditing){
       LayoutAnimation.configureNext(animationConfig);
-      this.setState({isEditing: true})
+      this.setState({isEditing:true, text:this.props.task.text})
+      if(this.props.onEditingTask){
+        this.props.onEditingTask(this.props.index, this.props.task)
+      }
     }
   }
   handlePressOut(){
@@ -166,7 +171,7 @@ export class Task extends React.Component {
     var leftEnabled = this.props.leftEnabled
 
     return (
-      <View style={[this.props.style, !this.props.last&&!this.props.fullWidth?{marginBottom: this.props.marginBottom?this.props.marginBottom:15}:null]}>
+      <View style={[this.props.style, !this.props.last?{marginBottom: this.props.marginBottom?this.props.marginBottom:15}:null]}>
         <ScrollView
         onContentSizeChange={()=>{this.scrollView.scrollTo({x:leftEnabled?screenWidth:0, animated: false})}}
         style={{zIndex: 2, overflow: this.props.shadow?'visible':'hidden'}}
@@ -185,9 +190,9 @@ export class Task extends React.Component {
           <View style={styles.taskPlaceholder}></View>
           ):null}
           <TouchableWithoutFeedback onLongPress={this.handleLongPress} onPress={this.handlePress} onPressOut={this.handlePressOut}>
-            <View style={[styles.taskContainer, this.props.fullWidth?styles.taskContainerFullWidth:null]}>
+            <View style={[styles.taskContainer, this.props.shadow?styles.taskShadow:null,]}>
               {!this.state.isEditing ? (
-              <Animated.View style={[this.props.style, styles.task, this.props.shadow?styles.taskShadow:null, (this.props.fullWidth&&this.props.index>0)?{borderTopWidth: 0}:null, (this.props.fullWidth&&this.state.scrolling&&!this.props.last)?{borderBottomWidth: 0}:null, this.props.fullWidth?styles.taskFullWidth:null, {backgroundColor: color}, this.props.borderColor?{borderColor: this.props.borderColor}:null]}>
+              <Animated.View style={[this.props.style, styles.task, {backgroundColor: color}]}>
                 {this.props.showDayIndicators&&this.props.task.scheduledForToday&&this.props.task.scheduledForTomorrow?(
                 <View style={styles.taskHeader}>
                   {this.props.task.scheduledForToday?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTodayIndicator}]}></View>):null}
@@ -195,7 +200,7 @@ export class Task extends React.Component {
                 </View>
                 ):null}
                 {this.props.fontLoaded ? (
-                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?(footerItems.length==0?this.props.verticalSpace+(this.props.fullWidth?5:17):6):this.props.verticalSpace}:null, !this.props.showDayIndicators?{marginTop:10}:null]}>{this.props.task.text.toUpperCase()}</Text>
+                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?(footerItems.length==0?this.props.verticalSpace+17:6):this.props.verticalSpace}:null, !this.props.showDayIndicators?{marginTop:10}:null]}>{this.props.task.text.toUpperCase()}</Text>
                 ) : null}
                 {this.props.task.goals.length>0 ? (
                 <TaskGoals style={footerItems.length==0?{marginBottom:17}:null} color={this.props.goalColor} textColor={this.props.goalTextColor} goals={this.props.task.goals} selectGoal={this.props.selectGoal} fontLoaded={this.props.fontLoaded} />
@@ -207,11 +212,13 @@ export class Task extends React.Component {
                 onBlur={this.handleBlur}
                 onChangeText={this.handleTextChange}
                 color={this.props.highlightColor}
-                borderColor={this.props.borderColor}
                 text={this.state.text}
                 textColor={this.props.textColor}
                 selectionColor={this.props.footerItemColor} />
               )}
+              {this.props.borderColor?(
+                <View style={{height:10, backgroundColor: this.props.borderColor}}></View>
+              ):null}
             </View>
           </TouchableWithoutFeedback>
           {this.props.rightEnabled?(
@@ -219,7 +226,7 @@ export class Task extends React.Component {
           ) : null}
         </ScrollView>
         {!this.state.isEditing ? (
-        <View style={[styles.taskUnderLayer, this.props.fullWidth?styles.taskUnderLayerFullWidth:null, {backgroundColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftColor:"transparent"}, {borderColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightBorderColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftBorderColor:"transparent"}, this.props.fullWidth&&this.props.last?{borderBottomWidth: 2}:null]}>
+        <View style={[styles.taskUnderLayer, {backgroundColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftColor:"transparent"}, {borderColor: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightBorderColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftBorderColor:"transparent"}]}>
           {this.props.fontLoaded ? (
           <Text style={[styles.actionText, {color: this.state.dragAction==1&&this.props.rightEnabled?this.props.rightTextColor:this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftTextColor:"transparent"}, {textAlign: this.state.dragAction==1&&this.props.rightEnabled?"right":this.state.dragAction==-1&&this.props.leftEnabled?"left":"center"}]}>
             {this.state.dragAction==1&&this.props.rightEnabled?this.props.rightText.toUpperCase():this.state.dragAction==-1&&this.props.leftEnabled?this.props.leftText.toUpperCase():""}
@@ -227,9 +234,6 @@ export class Task extends React.Component {
           ) : null}
         </View>
         ) : null}
-        {this.props.fullWidth&&this.state.scrolling&&!this.props.last&&this.props.borderColor?(
-          <View style={{height:2, width: screenWidth, backgroundColor: this.props.borderColor}}></View>
-        ):null}
       </View>
     )
   }
@@ -238,7 +242,7 @@ export class Task extends React.Component {
 class TaskForm extends React.Component {
   render() {
     return (
-      <View style={[styles.taskForm, this.props.style, this.props.shadow?styles.taskShadow:null, (this.props.fullWidth&&this.props.index>0)?{borderTopWidth: 0}:null, (this.props.fullWidth&&this.state.scrolling&&!this.props.last)?{borderBottomWidth: 0}:null, this.props.fullWidth?styles.taskFullWidth:null, {backgroundColor: this.props.color}, this.props.borderColor?{borderColor: this.props.borderColor}:null]}>
+      <View style={[styles.taskForm, this.props.style, {backgroundColor: this.props.color}]}>
         <TextInput
           onBlur={this.props.onBlur}
           onChangeText={this.props.onChangeText}
@@ -252,7 +256,7 @@ class TaskForm extends React.Component {
           returnKeyType="done"
           selectionColor={this.props.selectionColor}
           multiline={true}
-          style={[styles.textInput, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, {color: this.props.textColor}, {paddingTop: 14, paddingLeft: 16, paddingRight: 16, paddingBottom: 27}]}
+          style={[styles.textInput, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, {color: this.props.textColor}, {paddingTop: 15, paddingLeft: 10, paddingRight: 10, paddingBottom: 27}]}
           value={this.props.text.toUpperCase()} />
       </View>
     )
@@ -301,6 +305,9 @@ export class TasksList extends React.Component {
   scrollTo(y, animated) {
     this.list.scrollTo({y: y, animated: animated})
   }
+  scrollToIndex(index, pos) {
+    this.list.scrollToIndex(index, pos)
+  }
   scrollToEnd(animated) {
     this.list.scrollToEnd({animated: animated})
   }
@@ -342,6 +349,7 @@ export class TodayTask extends Task {
   render() {
     return (
       <Task
+        onEditingTask={this.props.onEditingTask}
         editable={this.props.editable}
         shadow={true}
         scrollable={this.props.scrollable}
@@ -390,6 +398,7 @@ export class TomorrowTask extends Task {
   render() {
     return (
       <Task
+        onEditingTask={this.props.onEditingTask}
         editable={this.props.editable}
         shadow={true}
         scrollable={this.props.scrollable}
@@ -480,6 +489,7 @@ export class TodoTask extends Task {
   render() {
     return (
       <Task
+        onEditingTask={this.props.onEditingTask}
         marginBottom={5}
         editable={this.props.editable}
         scrollable={this.props.scrollable}
@@ -524,23 +534,10 @@ const styles = StyleSheet.create({
     paddingLeft: 18,
     paddingRight: 18,
   },
-  taskContainerFullWidth: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
   task: {
     width: screenWidth-18*2,
     padding: 10,
     paddingTop: 5,
-    paddingBottom: 5,
-    borderBottomWidth: 10,
-    borderColor: "transparent",
-  },
-  taskFullWidth: {
-    width: screenWidth,
-    borderRadius: 0,
-    padding: 16,
-    paddingTop: 4,
     paddingBottom: 5,
   },
   taskText: {
@@ -582,12 +579,6 @@ const styles = StyleSheet.create({
     paddingRight: 18,
     borderWidth: 2,
   },
-  taskUnderLayerFullWidth: {
-    borderRadius: 0,
-    left: 0,
-    width: screenWidth,
-    borderBottomWidth: 4,
-  },
   taskPlaceholder: {
     width: screenWidth,
     height: '100%',
@@ -625,7 +616,7 @@ const styles = StyleSheet.create({
     marginLeft: 3,
   },
   taskForm: {
-    borderWidth: 2,
+
   },
   textInput: {
     fontFamily: 'pt-mono-bold',
