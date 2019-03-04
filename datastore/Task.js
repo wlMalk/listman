@@ -4,7 +4,7 @@ export default class Task {
   constructor(bucket) {
     return {
       id: uuid(),
-      text: "df",
+      text: "",
       parentRecurringTask: null,
       parentCompletedTask: null,
       bucket: bucket,
