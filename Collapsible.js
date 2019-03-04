@@ -59,6 +59,23 @@ export class Collapsible extends React.Component {
         outputRange: [0,1,1]
     })
     var children = Array.isArray(this.props.children)?Array.from(this.props.children):this.props.children
+    if(this.props.opacityIndices){
+      for(var i = 0; i<this.props.opacityIndices.length; i++){
+        var op = this.state.o.interpolate({
+            inputRange: [-1,0,1],
+            outputRange: [
+              this.props.opacityIndices[i].when==-1?this.props.opacityIndices[i].opacity:1,
+              this.props.opacityIndices[i].when==0?this.props.opacityIndices[i].opacity:1,
+              this.props.opacityIndices[i].when==1?this.props.opacityIndices[i].opacity:1,
+            ]
+        })
+        children[this.props.opacityIndices[i].index] = (
+          <Animated.View key={this.props.opacityIndices[i].index} style={{flex:1,opacity: op}}>
+            {children[this.props.opacityIndices[i].index]}
+          </Animated.View>
+        )
+      }
+    }
     var alwaysOn = []
     if(this.props.alwaysOnIndices){
       for(var i = 0; i<this.props.alwaysOnIndices.length; i++){
