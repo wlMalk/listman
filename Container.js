@@ -37,11 +37,15 @@ export default class Container extends React.Component {
         selectedGoal: null,
       }
       this.selectGoal = this.selectGoal.bind(this)
+
+      this.onEditingTodayTask = this.onEditingTodayTask.bind(this)
+      this.onEditingTomorrowTask = this.onEditingTomorrowTask.bind(this)
+      this.onEditingLaterTask = this.onEditingLaterTask.bind(this)
     }
     setViewingHome() {
-      if(this.state.scene!=HOME){
-        this.setScene(HOME, null)
-      }
+      this.setScene(HOME, null)
+      this.goalsList.scrollTo({x: 0, animated: true})
+      this.countersList.listRef.scrollTo({x: 0, animated: true})
     }
     setViewingToday() {
       if(this.state.scene!=TODAY){
@@ -51,6 +55,11 @@ export default class Container extends React.Component {
     setViewingTomorrow() {
       if(this.state.scene!=TOMORROW){
         this.setScene(TOMORROW, null)
+      }
+    }
+    setViewingAll() {
+      if(this.state.scene!=ALL){
+        this.setScene(ALL, null)
       }
     }
     setScene(scene,payload){
@@ -113,6 +122,15 @@ export default class Container extends React.Component {
       }
       return null
     }
+    onEditingTodayTask(index){
+      this.todayTasksList.list.flatListRef.getNode().scrollToIndex({index: index, viewPosition: 0.1, animated: true})
+    }
+    onEditingTomorrowTask(index){
+      this.tomorrowTasksList.list.flatListRef.getNode().scrollToIndex({index: index, viewPosition: 0.1, animated: true})
+    }
+    onEditingLaterTask(index){
+      this.laterTasksList.list.flatListRef.getNode().scrollToIndex({index: index, viewPosition: 0.1, animated: true})
+    }
     // onCreatingTask(forTomorrow){
     //   Animated.spring(this.state.dragY, {         //This will make the draggable card back to its original position
     //      toValue: !forTomorrow?0:100
@@ -170,6 +188,7 @@ export default class Container extends React.Component {
                     }.bind(this))
                 }}>
                 <GoalsList
+                  ref={(ref)=>{this.goalsList = ref}}
                   count={this.props.store.getGoalsCount()}
                   goals={this.props.store.getGoals()}
                   selectGoal={this.selectGoal}
@@ -186,6 +205,8 @@ export default class Container extends React.Component {
                       tasks={mainTasks}
                       renderItem={({item, index}) => (
                         <TodoTask
+                          index={index}
+                          onEditingTask={this.onEditingLaterTask}
                           editable={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                           scrollable={this.isSceneNotIn([HOME,TODAY,TOMORROW])}
                           last={index==mainTasksTotal}
@@ -208,6 +229,8 @@ export default class Container extends React.Component {
                   <ShadowOverlay color={themes[this.props.theme].mainColor} size={100} start={1} end={0} last={true} initiallyShown={true} />
                   ):null}
                   <CountersList
+                    creator={this.props.store.createLaterTask}
+                    ref={(ref)=>{this.countersList = ref}}
                     onAllPress={()=>{this.setScene(ALL,null)}}
                     onRemainingPress={()=>{this.setScene(REMAINING,null)}}
                     onCompletedPress={()=>{this.setScene(COMPLETED,null)}}
@@ -243,6 +266,7 @@ export default class Container extends React.Component {
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].todayAccent:null}
                       renderItem={({item, index}) => (
                         <TodayTask
+                          onEditingTask={this.onEditingTodayTask}
                           editable={true}
                           scrollable={true}
                           last={index==this.props.store.getTodayTasksCount()-1}
@@ -277,6 +301,7 @@ export default class Container extends React.Component {
                       startOverScrollColor={Platform.OS==='ios'?themes[this.props.theme].tomorrowAccent:null}
                       renderItem={({item, index}) => (
                         <TomorrowTask
+                          onEditingTask={this.onEditingTomorrowTask}
                           editable={true}
                           scrollable={true}
                           last={index==this.props.store.getTomorrowTasksTotal()-1}
