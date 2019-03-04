@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { LayoutAnimation, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 import { themes } from './Themes'
-import { COUNTERS_HEIGHT } from './helpers'
+import { COUNTERS_HEIGHT, animationConfig } from './helpers'
 
 import { List } from './List';
 
