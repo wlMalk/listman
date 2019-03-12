@@ -68,9 +68,9 @@ export class CountersList extends React.Component {
 class Counter extends React.Component {
   render() {
     return (
-        <View style={{flex:1, height: COUNTERS_HEIGHT, flexDirection: "row"}}>
+        <View style={{height: COUNTERS_HEIGHT, flexDirection: "row"}}>
           {this.props.fontLoaded ? (
-          <TouchableOpacity style={{flex: 1}} activeOpacity={.3} onPress={this.props.onPress}>
+          <TouchableOpacity activeOpacity={.3} onPress={this.props.onPress}>
             <View style={[styles.counter, this.props.selected?{opacity: 1, backgroundColor: themes[this.props.theme].mainAccent}:null]}>
               <Text style={[styles.counterName, {color: themes[this.props.theme].counterName}]}>{this.props.name.toUpperCase()}</Text>
               <Text style={[styles.counterCount, {color: themes[this.props.theme].counterCount}]}>{this.props.count}</Text>
