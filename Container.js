@@ -3,6 +3,7 @@ import { Font, Constants } from 'expo';
 import { LayoutAnimation, Dimensions, Animated, Keyboard, KeyboardAvoidingView, UIManager, findNodeHandle, StatusBar, SafeAreaView, StyleSheet, View, Platform } from 'react-native';
 
 import { ShadowOverlay } from './ShadowOverlay';
+import { EmptyList } from './EmptyList';
 import { TasksList, TodoTask, TodayTask, TomorrowTask, NowTask } from './Tasks';
 import { GoalsList } from './Goals';
 import { CountersList } from './Counters';
@@ -174,9 +175,9 @@ export default class Container extends React.Component {
       return (
         <KeyboardAvoidingView behavior="padding" enabled>
         <View style={{width: '100%', height: '100%'}}>
-          <View style={{backgroundColor:'#fff',width: '100%', height: '50%',position:'absolute',top:0}}></View>
+          <View style={{backgroundColor:themes[this.props.theme].headerColor,width: '100%', height: '50%',position:'absolute',top:0}}></View>
           <View style={{backgroundColor:themes[this.props.theme].tomorrowColor,width: '100%', height: '50%',position:'absolute',bottom:0}}></View>
-            <StatusBar backgroundColor={themes[this.props.theme].mainColor} barStyle="dark-content"/>
+            <StatusBar backgroundColor={themes[this.props.theme].headerColor} barStyle={(Platform.OS=="ios"?"dark":"light")+"-content"}/>
             <SafeAreaView style={{flex: 1,paddingTop: Platform.OS === 'android' ? Constants.statusBarHeight : 0}}>
               <Header onLogoPress={()=>{this.setViewingHome()}} theme={this.props.theme} fontLoaded={this.props.fontLoaded} />
               <View
@@ -220,8 +221,14 @@ export default class Container extends React.Component {
                           fontLoaded={this.props.fontLoaded} />
                       )}
                       overlayColor={themes[this.props.theme].mainColor}
-                      emptyState={"No tasks"}
-                      emptyStateColor={themes[this.props.theme].mainTitles}
+                      emptyState={(
+                        <EmptyList
+                        color={themes[this.props.theme].mainTitles}
+                        title="No tasks yet!"
+                        subtitle="tap on (+) to add new tasks"
+                        onPress={this.props.store.createLaterTask}
+                        fontLoaded={this.props.fontLoaded}/>
+                      )}
                       fontLoaded={this.props.fontLoaded}
                     />
                   </View>
@@ -282,8 +289,9 @@ export default class Container extends React.Component {
                       )}
                       noEndOverlay={true}
                       overlayColor={themes[this.props.theme].todayColor}
-                      emptyState={"No tasks for today"}
-                      emptyStateColor={themes[this.props.theme].todaySecondary}
+                      emptyState={(
+                        <EmptyList color={themes[this.props.theme].todaySecondary} title="No tasks for today!" subtitle="tap on (+) to add new tasks" onPress={this.props.store.createTodayTask} fontLoaded={this.props.fontLoaded}/>
+                      )}
                       fontLoaded={this.props.fontLoaded}
                     />
                   </View>
@@ -317,8 +325,9 @@ export default class Container extends React.Component {
                       )}
                       noEndOverlay={true}
                       overlayColor={themes[this.props.theme].tomorrowColor}
-                      emptyState={"No tasks for tomorrow"}
-                      emptyStateColor={themes[this.props.theme].tomorrowSecondary}
+                      emptyState={(
+                        <EmptyList color={themes[this.props.theme].tomorrowSecondary} title="No tasks for tomorrow!" subtitle="tap on (+) to add new tasks" onPress={this.props.store.createTomorrowTask} fontLoaded={this.props.fontLoaded}/>
+                      )}
                       fontLoaded={this.props.fontLoaded}
                     />
                   </View>
