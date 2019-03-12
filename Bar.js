@@ -14,7 +14,7 @@ var weekdays = new Array(7);
     weekdays[5] = "Friday";
     weekdays[6] = "Saturday";
 
-export class Bar extends React.Component {
+export class Bar extends React.PureComponent {
   render() {
     return (
       <Animated.View style={[styles.bar, this.props.style]}>
