@@ -179,6 +179,7 @@ export class Store {
   // edit task
   setTaskText(task, text){
     task.text = text
+    task.isNew = false
     this.sort()
     this.setter(this)
   }
