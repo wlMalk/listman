@@ -180,7 +180,7 @@ export class GoalsList extends React.Component {
               <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>GOALS</Text>
               ) : null}
               {this.props.fontLoaded ? (
-              <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>{this.props.count}</Text>
+              <Text style={{color: themes[this.props.theme].mainTitles, fontFamily: 'pt-mono-bold', fontSize: 14, textAlign: 'center'}}>{this.props.count+"/"+this.props.count}</Text>
               ) : null}
             </View>
             {this.props.fontLoaded ? (
