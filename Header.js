@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { themes } from './Themes'
 import { HEADER_HEIGHT } from './helpers'
 
-export class Header extends React.Component {
+export class Header extends React.PureComponent {
   render() {
     return (
       <View style={styles.header}>
