@@ -6,10 +6,10 @@ import { List } from './List';
 import { themes } from './Themes'
 import { limits, animationConfig } from './helpers'
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = parseInt(Dimensions.get('window').width);
 const importanceFormats = ["Not Important","Slightly Important","Important","Fairly Important","Very Important"]
 
-export class Task extends React.Component {
+export class Task extends React.PureComponent {
   constructor(props) {
     super(props)
     this.state = {
@@ -57,12 +57,13 @@ export class Task extends React.Component {
   }
   getAction(e){
     var action = 0;
+    const x = parseInt(e.nativeEvent.contentOffset.x)
     if(this.props.rightEnabled&&this.props.leftEnabled){
-      action = e.nativeEvent.contentOffset.x==screenWidth?0:(e.nativeEvent.contentOffset.x>screenWidth?1:-1);
+      action = x==screenWidth?0:(x>screenWidth?1:-1);
     }else if(this.props.rightEnabled){
-      action = e.nativeEvent.contentOffset.x==0?0:e.nativeEvent.contentOffset.x>0?1:-1;
+      action = x==0?0:x>0?1:-1;
     }else if(this.props.leftEnabled){
-      action = e.nativeEvent.contentOffset.x==screenWidth?0:(e.nativeEvent.contentOffset.x>screenWidth?1:-1);
+      action = x==screenWidth?0:(x>screenWidth?1:-1);
     }
     return action
   }
@@ -193,14 +194,14 @@ export class Task extends React.Component {
             <View style={[styles.taskContainer, this.props.shadow?styles.taskShadow:null,]}>
               {!this.state.isEditing ? (
               <Animated.View style={[this.props.style, styles.task, {backgroundColor: color}]}>
-                {this.props.showDayIndicators&&this.props.task.scheduledForToday&&this.props.task.scheduledForTomorrow?(
+                {this.props.showDayIndicators&&(this.props.scheduledForToday||this.props.scheduledForTomorrow)?(
                 <View style={styles.taskHeader}>
-                  {this.props.task.scheduledForToday?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTodayIndicator}]}></View>):null}
-                  {this.props.task.scheduledForTomorrow?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTomorrowIndicator}]}></View>):null}
+                  {this.props.scheduledForToday?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTodayIndicator}]}></View>):null}
+                  {this.props.scheduledForTomorrow?(<View style={[styles.taskDayIndicator, {backgroundColor: themes[this.props.theme].taskTomorrowIndicator}]}></View>):null}
                 </View>
                 ):null}
                 {this.props.fontLoaded ? (
-                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null, this.props.verticalSpace?{marginTop:this.props.verticalSpace,marginBottom:this.props.task.goals.length==0?(footerItems.length==0?this.props.verticalSpace+17:6):this.props.verticalSpace}:null, !this.props.showDayIndicators?{marginTop:10}:null]}>{this.props.task.text.toUpperCase()}</Text>
+                <Text style={[styles.taskText, {color: this.props.textColor}, this.props.textFontSize?{fontSize: this.props.textFontSize}:null]}>{this.props.task.text.toUpperCase()}</Text>
                 ) : null}
                 {this.props.task.goals.length>0 ? (
                 <TaskGoals style={footerItems.length==0?{marginBottom:17}:null} color={this.props.goalColor} textColor={this.props.goalTextColor} goals={this.props.task.goals} selectGoal={this.props.selectGoal} fontLoaded={this.props.fontLoaded} />
@@ -239,11 +240,13 @@ export class Task extends React.Component {
   }
 }
 
-class TaskForm extends React.Component {
+class TaskForm extends React.PureComponent {
   render() {
     return (
       <View style={[styles.taskForm, this.props.style, {backgroundColor: this.props.color}]}>
         <TextInput
+          placeholder={"i need to...".toUpperCase()}
+          placeholderColor={this.props.textColor+"aa"}
           onBlur={this.props.onBlur}
           onChangeText={this.props.onChangeText}
           maxLength={limits.textLength}
@@ -263,7 +266,7 @@ class TaskForm extends React.Component {
   }
 }
 
-class TaskGoals extends React.Component {
+class TaskGoals extends React.PureComponent {
   render() {
     return (
       <View style={[styles.taskGoalsList, this.props.style]}>
@@ -277,7 +280,7 @@ class TaskGoals extends React.Component {
   }
 }
 
-class TaskFooter extends React.Component {
+class TaskFooter extends React.PureComponent {
   render() {
     var nonNulls = this.props.items.filter((item)=>item!=null)
     var items = []
@@ -301,7 +304,7 @@ class TaskFooter extends React.Component {
   }
 }
 
-export class TasksList extends React.Component {
+export class TasksList extends React.PureComponent {
   scrollTo(y, animated) {
     this.list.scrollTo({y: y, animated: animated})
   }
@@ -322,7 +325,7 @@ export class TasksList extends React.Component {
         data={this.props.tasks}
         keyExtractor={task => task.id}
         showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         initialNumToRender={10}
         startOffset={this.props.startOffset}
         endOffset={this.props.endOffset}
@@ -359,7 +362,6 @@ export class TodayTask extends Task {
         rightEnabled={this.rightEnabled()}
         task={this.props.task}
         showDayIndicators={false}
-        verticalSpace={5}
         color={themes[this.props.theme].todayTasks[this.props.index]}
         borderColor={themes[this.props.theme].todayTasksBorder[this.props.index]}
         highlightColor={themes[this.props.theme].todayTasksHighlight[this.props.index]}
@@ -408,7 +410,6 @@ export class TomorrowTask extends Task {
         rightEnabled={this.rightEnabled()}
         task={this.props.task}
         showDayIndicators={false}
-        verticalSpace={5}
         color={themes[this.props.theme].tomorrowTasks[this.props.index]}
         borderColor={themes[this.props.theme].tomorrowTasksBorder[this.props.index]}
         highlightColor={themes[this.props.theme].tomorrowTasksHighlight[this.props.index]}
@@ -459,13 +460,36 @@ export class NowTask extends Task {
             marginLeft: 18,
           }}>{"NOW"}</Text>
           ) : null}
-          <TodayTask
+          <Task
+            onEditingTask={this.props.onEditingTask}
             editable={this.props.editable}
+            shadow={true}
             scrollable={true}
-            last={true}
-            key={"now"+this.props.task.id}
-            task={this.props.task}
             index={0}
+            key={"now"+this.props.task.id}
+            last={true}
+            leftEnabled={this.leftEnabled()}
+            rightEnabled={this.rightEnabled()}
+            task={this.props.task}
+            showDayIndicators={false}
+            color={themes[this.props.theme].todayTasks[0]}
+            borderColor={themes[this.props.theme].todayTasksBorder[0]}
+            highlightColor={themes[this.props.theme].todayTasksHighlight[0]}
+            textColor={themes[this.props.theme].todayTasksText[0]}
+            textFontSize={24}
+            rightText={this.props.rightText?this.props.rightText:"Not now"}
+            leftText={this.props.leftText?this.props.leftText:"Completed"}
+            rightColor={themes[this.props.theme].todayColor}
+            leftColor={themes[this.props.theme].todayColor}
+            rightBorderColor={themes[this.props.theme].todayColor}
+            leftBorderColor={themes[this.props.theme].todayColor}
+            rightTextColor={themes[this.props.theme].todaySecondary}
+            leftTextColor={themes[this.props.theme].todayAccent}
+            footerItemColor={themes[this.props.theme].todayTasksTextSecondary[0]}
+            footerItemSize={10}
+            footerSeparatorColor={themes[this.props.theme].todayTasksTextSecondary[0]}
+            goalColor={themes[this.props.theme].todayTasksTextSecondary[0]}
+            goalTextColor={"#fff"}
             rightAction={this.props.rightAction}
             leftAction={this.props.leftAction}
             selectGoal={this.props.selectGoal}
@@ -499,7 +523,6 @@ export class TodoTask extends Task {
         rightEnabled={this.rightEnabled()}
         task={this.props.task}
         showDayIndicators={true}
-        verticalSpace={5}
         color={themes[this.props.theme].mainColor}
         highlightColor={themes[this.props.theme].mainTasksHighlightColor}
         textColor={themes[this.props.theme].mainTasksTextColor}
@@ -537,15 +560,15 @@ const styles = StyleSheet.create({
   task: {
     width: screenWidth-18*2,
     padding: 10,
-    paddingTop: 5,
+    paddingTop: 0,
     paddingBottom: 5,
   },
   taskText: {
     fontFamily: 'pt-mono-bold',
     fontSize: 20,
     textAlign: 'left',
-    marginTop: 2,
-    marginBottom: 3,
+    paddingTop: 15,
+    paddingBottom: 6,
   },
   taskGoalsList: {
     marginBottom: 1,
