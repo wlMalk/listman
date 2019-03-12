@@ -1,7 +1,9 @@
 import * as chroma from 'chroma-js'
 
 class Theme {
-  constructor(mainColor, todayColor, tomorrowColor, mainAccent, todayAccent, tomorrowAccent){
+  constructor(mainColor, todayColor, tomorrowColor, mainAccent, todayAccent, tomorrowAccent, headerColor){
+    this.headerColor = headerColor
+
     this.todayColor = todayColor
 
     if(typeof tomorrowColor !== "undefined" && tomorrowColor != null){
@@ -89,7 +91,7 @@ var tasksLimit = 0
 
 export function initThemes(limit){
   tasksLimit = limit
-  themes = [new Theme('#FFEEC9','#CD4331', '#15222E', null,'#FFA758','#37C3C8')]
+  themes = [new Theme('#FFEEC9','#CD4331', '#15222E', null,'#FFA758','#37C3C8','#ffffff')]
 }
 
 // export const themes = [new Theme('#CD4331','#FFEEC9','#15222E','#FFFFFF','#FFA758','#37C3C8')]
